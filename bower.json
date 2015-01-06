@@ -1,0 +1,22 @@
+{
+  "name": "startups",
+  "version": "0.0.1",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#~0.5.2",
+    "paper-shadow": "Polymer/paper-shadow#~0.5.2",
+    "paper-spinner": "Polymer/paper-spinner#~0.5.2"
+  },
+  "resolutions": {
+    "core-component-page": "^0.5.0",
+    "polymer": "^0.5.0",
+    "webcomponentsjs": "^0.5.0"
+  }
+}

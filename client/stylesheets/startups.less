@@ -1,0 +1,47 @@
+body {
+    header {
+        margin: 1rem;
+        
+        h1 {
+            margin: 0;
+        }
+    }
+
+    main {
+        position: relative;
+    }
+}
+
+@rounded-corner: {
+    border-radius: .25rem;
+};
+
+section#map-filter {
+
+	position: absolute;
+	left: 1rem;
+	top: 1rem;
+	width: 18rem;
+
+    .menu {
+        width: 100%;
+    }
+}
+
+.ui.accordion {
+    .menu {
+        border-radius: 0;
+        box-shadow: none;
+        
+        .item:first-child {
+            border-top: 0px;
+        }
+        .item:last-child {
+            border-bottom: 0px;
+        }
+
+        &:last-child {
+            border-radius: 0px 0px @styledBorderRadius @styledBorderRadius;
+        }
+    }
+}

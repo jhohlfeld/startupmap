@@ -1,0 +1,13 @@
+<template name="UserNav">
+    <nav>
+        {{#if isAdmin}}
+        <a class="ui icon button" href="/">
+            <i class="remove icon"></i> Leave Admin-Area
+        </a>
+        {{else}}
+        <a class="ui icon button" href="/admin">
+            <i class="setting icon"></i> Admin-Area
+        </a>
+        {{/if}}
+    </nav>
+</template>

@@ -1,0 +1,21 @@
+<template name="ApplicationLayout">
+    <header>
+        <div class="ui grid">
+            <div class="four wide column">
+                <h1>Startup Map</h1>
+            </div>
+
+            <div class="right aligned twelve wide column">
+                {{> UserNav}}
+            </div>
+        </div>
+    </header>
+
+    <main flex layout vertical>
+        {{> yield}}
+    </main>
+
+    <footer>
+
+    </footer>
+</template>
