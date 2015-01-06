@@ -1,21 +1,16 @@
 <template name="ApplicationLayout">
-    <header>
-        <div class="ui grid">
-            <div class="four wide column">
-                <h1>Startup Map</h1>
-            </div>
 
-            <div class="right aligned twelve wide column">
-                {{> UserNav}}
-            </div>
-        </div>
-    </header>
+    <core-header-panel>
 
-    <main flex layout vertical>
-        {{> yield}}
-    </main>
+        <header class="core-header" horizontal layout>
+            <h1 flex self-center>Startup Map</h1>
 
-    <footer>
+            {{> UserNav}}
+        </header>
 
-    </footer>
+        <main class="content" fit vertical layout>
+            {{> yield}}
+        </main>
+
+    </core-header-panel>
 </template>

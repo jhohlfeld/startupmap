@@ -1,8 +1,16 @@
 @styledBorderRadius: 0.2857rem;
 
+html, body {
+    height: 100%;
+    margin: 0;
+}
+core-header-panel {
+    height: 100%;
+}
+
 body {
     header {
-        margin: 1rem;
+        padding: 1rem;
         
         h1 {
             margin: 0;
@@ -46,4 +54,8 @@ section#map-filter {
             border-radius: 0px 0px @styledBorderRadius @styledBorderRadius;
         }
     }
+}
+
+.container {
+    margin: 2rem;
 }

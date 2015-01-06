@@ -1,0 +1,35 @@
+<template name="admin">
+
+    <div class="container">
+        <div horizontal layout>
+            <h2 flex>Admin</h2>
+            <a id="add-startup-button" class="ui green button" self-center>
+                <i class="plus icon"></i> Add Startup</a>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <section id="startups" class="ui divided list">
+            {{#each startups}} {{> startup}} {{/each}}
+        </section>
+    </div>
+
+    {{> addStartup}}
+
+</template>
+
+<template name="startup">
+    <a href="" class="item">{{name}}</a>
+</template>
+
+<template name="addStartup">
+    <div class="ui modal" id="add-startup-modal">
+    	<i class="close icon"></i>
+        <div class="header">
+            Add Startup
+        </div>
+        <div class="content">
+            Add startup...
+        </div>
+    </div>
+</template>

@@ -1,10 +1,13 @@
 Template.map.rendered = function() {
     this.autorun(function() {
+
+        if (!Meteor.polymerReady.get()) {
+            return;
+        }
         if (!Mapbox.loaded()) {
-            window.addEventListener('polymer-ready', function(e) {
-                console.log('initializing mapbox');
-                Mapbox.load();
-            });
+
+            console.log('initializing mapbox');
+            Mapbox.load();
 
         } else {
 
