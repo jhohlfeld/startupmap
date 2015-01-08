@@ -3,9 +3,8 @@ Router.configure({
     loadingTemplate: 'loading'
 });
 
-Router.route('home', {
-    path: '/',
-    template: 'map'
+Router.route('map', {
+    path: '/'
 });
 
 Router.route('/admin');
@@ -19,3 +18,4 @@ Meteor.startup(function() {
     	Meteor.polymerReady.set(true);
     });
 });
+
