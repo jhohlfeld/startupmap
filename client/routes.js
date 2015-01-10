@@ -1,5 +1,5 @@
 Router.configure({
-    layoutTemplate: 'ApplicationLayout',
+    layoutTemplate: 'mapLayout',
     loadingTemplate: 'loading'
 });
 
@@ -7,23 +7,26 @@ Router.route('map', {
     path: '/'
 });
 
-Router.route('admin');
+Router.route('/admin', {
+    name: 'admin',
+});
 
-Router.route('admin/add-startup', {
-	action: function(){
-		this.render('admin', {
-			data: {showAddDialog: true}
-		});
-	}
+Router.route('/admin/edit-startup', {
+	name: 'admin.add',
+	controller: 'AdminController'
+});
+
+Router.route('/admin/edit-startup/:_id', {
+	name: 'admin.edit',
+	controller: 'AdminController'
 });
 
 Meteor.startup(function() {
 
-	Meteor.polymerReady = new ReactiveVar(false);
-    
+    Meteor.polymerReady = new ReactiveVar(false);
+
     window.addEventListener('polymer-ready', function(e) {
-    	console.log('polymer ready...')
-    	Meteor.polymerReady.set(true);
+        console.log('polymer ready...')
+        Meteor.polymerReady.set(true);
     });
 });
-

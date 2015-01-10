@@ -1,27 +1,31 @@
 <template name="admin">
-
     <div class="container">
         <div horizontal layout>
             <h2 flex>Admin</h2>
-            <a href="/admin/add-startup" class="ui green button" self-center>
+            <a href="/admin/edit-startup" class="ui green button" self-center>
                 <i class="plus icon"></i> Add Startup</a>
         </div>
 
-        <div class="ui divider"></div>
-
-        <section id="startups" class="ui divided list">
-            {{#each startups}}
-                {{> startup}}
-            {{/each}}
+        <section id="startups" class="ui big very relaxed celled list">
+            {{#each startups}} {{> startup}} {{/each}}
         </section>
     </div>
 
-    {{> addstartup}}
-
+    {{> yield "addstartup"}}
 </template>
 
 <template name="startup">
-    <a href="" class="item">{{name}}</a>
+    <a href="/admin/edit-startup/{{_id}}" class="item">
+        <i class="big map marker icon"></i>
+        <div class="content">
+            <div class="header">{{name}}</div>
+            <div class="description">
+                {{#if website}}
+                <small>{{website}}</small>
+                <br> {{/if}} {{description}}
+            </div>
+        </div>
+    </a>
 </template>
 
 <template name="addstartup">

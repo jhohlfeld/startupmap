@@ -1,0 +1,9 @@
+<template name="mapLayout">
+	{{> globalLayout}}
+
+	{{#contentFor "content"}}
+		<main fit vertical layout>
+		{{> yield}}
+		</main>
+	{{/contentFor}}
+</template>

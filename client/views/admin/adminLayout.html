@@ -1,0 +1,15 @@
+<template name="adminLayout">
+	{{> globalLayout}}
+
+    {{#contentFor "content"}}
+        <main vertical layout>
+            {{> yield}}
+        </main>
+
+        <footer>
+            <small>&copy; 2015 by Jakob Hohlfeld</small>
+        </footer>
+    {{/contentFor}}
+
+    {{> yield "addstartup"}}
+</template>

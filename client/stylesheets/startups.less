@@ -6,10 +6,8 @@ html, body {
 }
 core-header-panel {
     height: 100%;
-}
-
-body {
-    header {
+    
+    >header {
         padding: 1rem;
         
         h1 {
@@ -17,8 +15,12 @@ body {
         }
     }
 
-    main {
+    >main {
         position: relative;
+    }
+
+    >footer {
+
     }
 }
 
@@ -58,4 +60,10 @@ section#map-filter {
 
 .container {
     margin: 2rem;
+}
+
+section#startups.list {
+    .item .description {
+        min-height: rem;
+    }
 }
