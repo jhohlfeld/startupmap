@@ -7,7 +7,15 @@ Router.route('map', {
     path: '/'
 });
 
-Router.route('/admin');
+Router.route('admin');
+
+Router.route('admin/add-startup', {
+	action: function(){
+		this.render('admin', {
+			data: {showAddDialog: true}
+		});
+	}
+});
 
 Meteor.startup(function() {
 

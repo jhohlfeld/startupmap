@@ -3,18 +3,20 @@
     <div class="container">
         <div horizontal layout>
             <h2 flex>Admin</h2>
-            <a id="add-startup-button" class="ui green button" self-center>
+            <a href="/admin/add-startup" class="ui green button" self-center>
                 <i class="plus icon"></i> Add Startup</a>
         </div>
 
         <div class="ui divider"></div>
 
         <section id="startups" class="ui divided list">
-            {{#each startups}} {{> startup}} {{/each}}
+            {{#each startups}}
+                {{> startup}}
+            {{/each}}
         </section>
     </div>
 
-    {{> addStartup}}
+    {{> addstartup}}
 
 </template>
 
@@ -22,14 +24,69 @@
     <a href="" class="item">{{name}}</a>
 </template>
 
-<template name="addStartup">
-    <div class="ui modal" id="add-startup-modal">
-    	<i class="close icon"></i>
+<template name="addstartup">
+    <div class="ui modal form" id="add-startup-modal">
+        <i class="close icon"></i>
         <div class="header">
-            Add Startup
+            Add Entry
         </div>
         <div class="content">
-            Add startup...
+            <div class="ui grid">
+                <div class="twelve wide column">
+                    <div class="two fields">
+                        <div class="ten wide field">
+                            <label>Name</label>
+                            <input type="text" name="name" placeholder="Name" />
+                        </div>
+                        <div class="six wide field">
+                            <label>Website</label>
+                            <input type="text" name="website" placeholder="Website URL">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Location</label>
+                        <input type="text" name="location" placeholder="Country, City, Street Address" autocomplete="off" spellcheck="off" />
+                    </div>
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Type</label>
+                            <input type="text" name="type" placeholder="Type">
+                        </div>
+                        <div class="field">
+                            <label>Industry</label>
+                            <input type="text" name="industry" placeholder="Industry">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="four wide column">
+                    <img class="ui medium image" src="/images/image.png" />
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Description</label>
+                <textarea name="description"></textarea>
+            </div>
+
+            <div class="two fields">
+                <div class="field">
+                    <label>Founded</label>
+                    <input type="text" name="founded" placeholder="Year founded">
+                </div>
+                <div class="field">
+                    <label>Head count</label>
+                    <input type="text" name="headcount" placeholder="Head count">
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a class="ui black button">Cancel</a>
+            <a class="ui positive right labeled icon submit button">
+                Save
+                <i class="checkmark icon"></i>
+            </a>
         </div>
     </div>
 </template>
