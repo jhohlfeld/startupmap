@@ -28,3 +28,18 @@
     </section>
 
 </template>
+
+
+<template name="mapinfo">
+    <h3 class="ui dividing header">{{name}}</h3>
+    <div class="ui list">
+        <div class="item">{{location}}</div>
+        <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a></div>
+    </div>
+    {{#if description}}
+    <div class="ui divider"></div>
+    <div>
+    {{#markdown}}{{description}}{{/markdown}}
+    </div>
+    {{/if}}
+</template>
