@@ -14,8 +14,8 @@ Template.map.rendered = function() {
         }
         if (!Mapbox.loaded()) {
 
-            console.log('loading mapbox');
-            Mapbox.load();
+            // console.log('loading mapbox');
+            // Mapbox.load();
             return;
 
         }
@@ -25,13 +25,12 @@ Template.map.rendered = function() {
         }
 
         // initialize map _once_
-        
+
         map_canvas = $('#map');
 
         console.log('initializing mapbox');
 
-        L.mapbox.accessToken = 'pk.eyJ1IjoiamhvaGxmZWxkIiwiYSI6IjRVTFJXY0EifQ.K8QEmAJhBKxRt3eJ7fA8eA';
-        map = L.mapbox.map('map', 'jhohlfeld.klaa8f80', {
+        map = L.mapbox.map('map', Session.get('mapId'), {
             zoomControl: false
         });
 
@@ -43,6 +42,5 @@ Template.map.rendered = function() {
 
         $('.ui.dropdown').dropdown();
         $('.ui.accordion').accordion();
-
     });
 };

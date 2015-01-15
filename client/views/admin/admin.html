@@ -11,7 +11,6 @@
         </section>
     </div>
 
-    {{> yield "addstartup"}}
 </template>
 
 <template name="startup">
@@ -28,8 +27,8 @@
     </a>
 </template>
 
-<template name="addstartup">
-    <div class="ui modal form" id="add-startup-modal">
+<template name="editstartup">
+    <div class="ui modal form">
         <i class="close icon"></i>
         <div class="header">
             Add Entry
@@ -49,7 +48,7 @@
                     </div>
                     <div class="field">
                         <label>Location</label>
-                        <input type="text" name="location" placeholder="Country, City, Street Address" autocomplete="off" spellcheck="off" />
+                        <input type="text" name="location" placeholder="Country, City, Street Address" autocomplete="off" spellcheck="off" data-template="suggestion" />
                     </div>
                     <div class="two fields">
                         <div class="field">

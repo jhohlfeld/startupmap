@@ -1,22 +1,16 @@
 var addDialog;
 
-var addDialogModal = function(element, template, data) {
-    element.modal.setData = $.proxy(function(data) {
-
-        if (!data) {
-            return;
-        }
-
+var addDialogModal = function(element, options) {
+    var options = options || {};
+    element.modal.setData = $.proxy(options.setData || function(data) {
         var inputs = $('input,textarea', this);
-
         inputs.each(function(i, el) {
             var el = $(el);
             var val = data[el.attr('name')];
             el.val(val);
         });
-
-        this.modal('setting', {
-            onApprove: function() {
+        return this.modal('setting', {
+            onApprove: options.onApprove || function() {
                 var doc = {};
                 if (data && data._id) {
                     doc._id = data._id;
@@ -27,16 +21,15 @@ var addDialogModal = function(element, template, data) {
                 });
                 Meteor.call('saveStartup', doc);
                 Router.go('admin');
-            },
-            onHidden: function() {
-                Router.go('admin');
             }
         });
-
-        return this;
     }, element);
 
-    return element.modal();
+    return element.modal('setting', {
+        onHidden: options.onHidden || function() {
+            Router.go('admin');
+        }
+    });
 };
 
 AdminController = RouteController.extend({
@@ -52,25 +45,18 @@ AdminController = RouteController.extend({
     },
 
     action: function() {
-        console.log('action..');
-
         this.render('admin');
-        this.render('addstartup', {
-            to: 'addstartup',
+        var geocoder = new Geocoder();
+        this.render('editstartup', {
+            to: 'editstartup',
             data: function() {
-                if (this.route.path() !== '/admin') {
-                    if (this.params._id) {
-                        return Startups.findOne({
-                            _id: this.params._id
-                        });
-
-                    } else {
-                        return {};
-                    }
-                } else {
-
-                    return null;
-                }
+                return {
+                    startup: this.params._id ? Startups.findOne({
+                        _id: this.params._id
+                    }) : {},
+                    showDialog: (this.route.path() !== '/admin'),
+                    geocoder: geocoder
+                };
             }
         });
     }
@@ -81,23 +67,25 @@ Template.admin.rendered = function() {
     console.log('rendered admin view..');
 };
 
-Template.addstartup.rendered = function() {
+Template.editstartup.rendered = function() {
     var template = this;
     this.autorun(function() {
         if (!Meteor.polymerReady.get()) {
             return;
         }
         if (!addDialog) {
-            addDialog = addDialogModal(template.$('.modal'), template);
+            addDialog = addDialogModal(template.$('.modal'));
         }
 
         var data = Template.currentData(template.view);
-        addDialog.modal.setData(data);
-        if (data) {
+        if (data && data.showDialog) {
+            addDialog.modal.setData(data.startup);
             addDialog.modal('show');
+	        Meteor.typeahead(addDialog.find('input[name=location]'), template.data.geocoder.source);
         } else {
             addDialog.modal('hide');
         }
+
     });
 };
 
