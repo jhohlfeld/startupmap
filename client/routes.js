@@ -21,6 +21,11 @@ Router.route('/admin/edit-startup/:_id', {
     controller: 'AdminController'
 });
 
+Router.route('/admin/remove-startup/:_id', {
+    name: 'admin.remove',
+    controller: 'AdminController'
+});
+
 Session.set('mapId', 'jhohlfeld.klaa8f80');
 Session.set('mapAccessToken', 'pk.eyJ1IjoiamhvaGxmZWxkIiwiYSI6IjRVTFJXY0EifQ.K8QEmAJhBKxRt3eJ7fA8eA');
 

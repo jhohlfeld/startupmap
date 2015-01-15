@@ -8,7 +8,11 @@ if (Meteor.isServer) {
                 _id: Match.Optional(String),
                 name: String,
                 website: Match.Optional(String),
-                location: String,
+                location: Match.Optional(String),
+                geolocation: Match.Optional({
+                    'type': 'Point',
+                    'coordinates': [Number]
+                }),
                 type: String,
                 industry: String,
                 description: Match.Optional(String),
@@ -18,6 +22,13 @@ if (Meteor.isServer) {
             Startups.upsert({
                 _id: doc._id
             }, doc);
+        },
+
+        removeStartup: function(startupId) {
+            check(startupId, String);
+            Startups.remove({
+                _id: startupId
+            });
         }
     });
 

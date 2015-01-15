@@ -6,7 +6,7 @@
                 <i class="plus icon"></i> Add Startup</a>
         </div>
 
-        <section id="startups" class="ui big very relaxed celled list">
+        <section id="startups" class="ui big very relaxed celled selection list">
             {{#each startups}} {{> startup}} {{/each}}
         </section>
     </div>
@@ -14,17 +14,27 @@
 </template>
 
 <template name="startup">
-    <a href="/admin/edit-startup/{{_id}}" class="item">
+    <div class="item" data-id="{{_id}}">
+        <a href="{{pathFor route='admin.remove' data=getData}}" class="right floated compact ui icon basic red button">
+            <i class="trash icon"></i>
+            Remove
+        </a>
         <i class="big map marker icon"></i>
         <div class="content">
             <div class="header">{{name}}</div>
             <div class="description">
                 {{#if website}}
                 <small>{{website}}</small>
-                <br> {{/if}} {{description}}
+                <br> 
+                {{/if}}
+
+                {{#if location}}
+                <small>{{location}}</small>
+                <br> 
+                {{/if}}
             </div>
         </div>
-    </a>
+    </div>
 </template>
 
 <template name="editstartup">
@@ -92,4 +102,37 @@
             </a>
         </div>
     </div>
+</template>
+
+<template name="removeconfirm">
+<div class="ui basic modal">
+  <i class="close icon"></i>
+  <div class="header">
+    Please confirm
+  </div>
+  <div class="content">
+    <div class="image">
+      <i class="trash icon"></i>
+    </div>
+    <div class="description">
+      <p>Are you sure about deleting "{{name}}" with all it's related content?</p>
+      <p>
+          <span class="ui red horizontal label">Careful!</span>
+          You will not be able to undo this action!
+      </p>
+    </div>
+  </div>
+  <div class="actions">
+    <div class="two fluid ui inverted buttons">
+      <div class="ui red basic inverted negative button">
+        <i class="remove icon"></i>
+        No
+      </div>
+      <div class="ui green basic inverted positive button">
+        <i class="checkmark icon"></i>
+        Yes
+      </div>
+    </div>
+  </div>
+</div>
 </template>
