@@ -1,5 +1,7 @@
 (function() {
-    var map, map_canvas;
+    var map, map_canvas, mapMarkers = [];
+
+    var filterIndexMap = ['type', 'industry'];
 
     window.MapController = RouteController.extend({
         onStop: function() {
@@ -13,54 +15,59 @@
         },
         data: function() {
             return Startups.find();
-        },
-        // action: function() {
-        //     this.render('map');
-
-        //     console.log(this.data());
-        // }
+        }
     });
 
     Template.map.rendered = function() {
         var template = this;
-        this.autorun(function() {
+        this.autorun(function(c) {
 
             if (!Session.get('polymerReady') || !Session.get('mapboxReady')) {
                 return;
             }
 
-            if (map_canvas) {
+            if (!map_canvas) {
+
+                // initialize map _once_
+
+                map_canvas = $('#map');
+
+                console.log('initializing mapbox');
+
+                map = L.mapbox.map('map', Session.get('mapId'), {
+                    zoomControl: false
+                });
+
+                var zoom = L.control.zoom({
+                    position: 'topright'
+                });
+
+                map.addControl(zoom);
+
+            } else {
                 $('#map').replaceWith(map_canvas);
-                return;
             }
 
-            // initialize map _once_
+            // re-apply data
 
-            map_canvas = $('#map');
-
-            console.log('initializing mapbox');
-
-            map = L.mapbox.map('map', Session.get('mapId'), {
-                zoomControl: false
-            });
-
-            var zoom = L.control.zoom({
-                position: 'topright'
-            });
-
-            map.addControl(zoom);
+            console.log('(re)applying map data');
 
             $('.ui.dropdown').dropdown();
-            $('.ui.accordion').accordion();
+
+            Deps.nonreactive(function() {
+                var accordion = $('.ui.accordion').accordion('open', Session.get('mapfiltersVisible'));
+                accordion.accordion('setting', {
+                    onOpen: function() {
+                        var index = Math.floor($(this).index() / 2);
+                        Session.set('mapfiltersVisible', index);
+                    }
+                });
+            });
+
+            $(map.getPanes().markerPane).empty();
+            mapMarkers = [];
 
             template.data.forEach(function(startup) {
-                // var feature = {
-                //     "type": "Feature",
-                //     "geometry": startup.geolocation,
-                //     "properties": {
-                //         "name": startup.name
-                //     }
-                // };
                 var icon = L.mapbox.marker.icon({
                         'marker-size': 'large',
                         'marker-symbol': UI.labelIcon('type', startup.type),
@@ -72,7 +79,26 @@
                 var popup = L.popup({
                     autoPanPaddingTopLeft: L.point(280, 14)
                 }).setContent(Blaze.toHTMLWithData(Template.mapinfo, startup));
+
                 marker.bindPopup(popup).addTo(map);
+                marker.data = startup;
+
+                mapMarkers.push(marker);
+            });
+        });
+
+        this.autorun(function(c) {
+            var category = filterIndexMap[Session.get('mapfiltersVisible')];
+
+            console.log('mapfilter changed');
+
+            mapMarkers.forEach(function(marker) {
+                var icon = L.mapbox.marker.icon({
+                    'marker-size': 'large',
+                    'marker-symbol': UI.labelIcon(category, marker.data[category]),
+                    'marker-color': UI.labelColorHash(category, marker.data[category])
+                });
+                marker.setIcon(icon);
             });
         });
     };
@@ -88,13 +114,12 @@
         return items;
     }
 
-    Template.mapfilters.helpers({
-        industries: function() {
-            return filterProp(Template.parentData(1), 'industry');
-        },
-        type: function() {
-            return filterProp(Template.parentData(1), 'type');
-        }
-    });
+    Template.mapfilters.helpers(
+        _.object(filterIndexMap, _.map(filterIndexMap, function(f) {
+            return function() {
+                return filterProp(Template.parentData(1), f);
+            };
+        }))
+    );
 
 })();

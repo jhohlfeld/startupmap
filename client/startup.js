@@ -1,5 +1,6 @@
 Session.set('mapId', 'jhohlfeld.klaa8f80');
 Session.set('mapAccessToken', 'pk.eyJ1IjoiamhvaGxmZWxkIiwiYSI6IjRVTFJXY0EifQ.K8QEmAJhBKxRt3eJ7fA8eA');
+Session.set('mapfiltersVisible', 0);
 
 Meteor.startup(function() {
 
