@@ -18,9 +18,6 @@ var addDialogModal = function(element, options) {
             //
             onApprove: options.onApprove || function() {
                 var doc = data || {};
-                // if (data && data._id) {
-                //     doc._id = data._id;
-                // }
                 inputs.each(function(i, el) {
                     var el = $(el);
                     doc[el.attr('name')] = el.val();
@@ -82,7 +79,7 @@ AdminController = RouteController.extend({
 Template.removeconfirm.rendered = function() {
     var template = this;
     this.autorun(function() {
-        if (!Meteor.polymerReady.get()) {
+        if (!Session.get('polymerReady')) {
             return;
         }
         var modal = template.$('.modal').modal('show');
@@ -105,7 +102,7 @@ Template.admin.rendered = function() {
 Template.editstartup.rendered = function() {
     var template = this;
     this.autorun(function() {
-        if (!Meteor.polymerReady.get()) {
+        if (!Session.get('polymerReady') || !Session.get('mapboxReady')) {
             return;
         }
         if (!addDialog) {

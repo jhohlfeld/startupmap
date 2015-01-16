@@ -1,3 +1,41 @@
+@styledBorderRadius: 0.2857rem;
+
+/*-------------------
+      Site Colors
+--------------------*/
+
+/*---  Colors  ---*/
+@black            : #1B1C1D;
+@blue             : #2196F3;
+@green            : #4CAF50;
+@grey             : #9E9E9E;
+@orange           : #FF9800;
+@pink             : #E91E63;
+@purple           : #9C27B0;
+@red              : #F44336;
+@teal             : #1de9b6;
+@yellow           : #FFEB3B;
+
+/*---  Light Colors  ---*/
+@lightBlack       : #333333;
+@lightBlue        : #2979FF;
+@lightGreen       : #00E676;
+@lightOrange      : #FF9100;
+@lightPink        : #F50057;
+@lightPurple      : #D500F9;
+@lightRed         : #FF1744;
+@lightTeal        : #1DE9B6;
+@lightYellow      : #FFEA00;
+
+/*---   Neutrals  ---*/
+@fullBlack        : #000000;
+@darkGrey         : #AAAAAA;
+@lightGrey        : #DCDDDE;
+@offWhite         : #FAFAFA;
+@darkWhite        : #F0F0F0;
+@white            : #FFFFFF;
+
+
 /*--------------
       Hover
 ---------------*/
@@ -13,4 +51,168 @@
 .ui.menu .ui.dropdown .menu .item:hover {
   cursor: pointer;
   background-color: rgba(0, 0, 0, 0.02);
+}
+
+/*--------------
+     Accordeon
+---------------*/
+
+.ui.accordion {
+    .menu {
+        border-radius: 0;
+        box-shadow: none;
+        
+        .item:first-child {
+            border-top: 0px;
+        }
+        .item:last-child {
+            border-bottom: 0px;
+        }
+
+        &:last-child {
+            border-radius: 0px 0px @styledBorderRadius @styledBorderRadius;
+        }
+    }
+}
+
+/*--------------
+     Labels
+---------------*/
+
+section#map .leaflet-popup {
+  h3.ui.header {
+      margin-top: .65rem;
+  }
+  .ui.small.ribbon.label {
+      left: -1.7rem;
+  }
+}
+
+/*--------------
+     Links
+---------------*/
+
+.linkColor (@color) { @linkColor: darken(@color, 15); }
+.linkColorHighlight (@color) { @linkColorHighlight: lighten(@color, 5); }
+
+.linkColorMixin (@color) {
+  .linkColor(@color);
+  color: @linkColor;
+  border-bottom: 1px dotted @linkColor;
+}
+
+.linkColorHoverMixin (@color) {
+  &:hover {
+    .linkColorHighlight(@color);
+    color: @linkColorHighlight !important;
+    border-color: @linkColorHighlight;
+  }
+}
+
+a.ui.category {
+    &.black { 
+      .linkColorMixin(@black);
+      .linkColorHoverMixin(@black);
+    }
+    &.blue { 
+      .linkColorMixin(@blue);
+      .linkColorHoverMixin(@blue);
+    }
+    &.green { 
+      .linkColorMixin(@green);
+      .linkColorHoverMixin(@green);
+    }
+    &.grey { 
+      .linkColorMixin(@grey);
+      .linkColorHoverMixin(@grey);
+    }
+    &.orange { 
+      .linkColorMixin(@orange);
+      .linkColorHoverMixin(@orange);
+    }
+    &.pink { 
+      .linkColorMixin(@pink);
+      .linkColorHoverMixin(@pink);
+    }
+    &.purple { 
+      .linkColorMixin(@purple);
+      .linkColorHoverMixin(@purple);
+    }
+    &.red { 
+      .linkColorMixin(@red);
+      .linkColorHoverMixin(@red);
+    }
+    &.teal { 
+      .linkColorMixin(@teal);
+      .linkColorHoverMixin(@teal);
+    }
+    &.yellow { 
+      .linkColorMixin(@yellow);
+      .linkColorHoverMixin(@yellow);
+    }
+
+    &.lightBlack { 
+      .linkColorMixin(@lightBlack);
+      .linkColorHoverMixin(@lightBlack);
+    }
+    &.lightBlue { 
+      .linkColorMixin(@lightBlue);
+      .linkColorHoverMixin(@lightBlue);
+    }
+    &.lightGreen { 
+      .linkColorMixin(@lightGreen);
+      .linkColorHoverMixin(@lightGreen);
+    }
+    &.lightGrey { 
+      .linkColorMixin(@lightGrey);
+      .linkColorHoverMixin(@lightGrey);
+    }
+    &.lightOrange { 
+      .linkColorMixin(@lightOrange);
+      .linkColorHoverMixin(@lightOrange);
+    }
+    &.lightPink { 
+      .linkColorMixin(@lightPink);
+      .linkColorHoverMixin(@lightPink);
+    }
+    &.lightPurple { 
+      .linkColorMixin(@lightPurple);
+      .linkColorHoverMixin(@lightPurple);
+    }
+    &.lightRed { 
+      .linkColorMixin(@lightRed);
+      .linkColorHoverMixin(@lightRed);
+    }
+    &.lightTeal { 
+      .linkColorMixin(@lightTeal);
+      .linkColorHoverMixin(@lightTeal);
+    }
+    &.lightYellow { 
+      .linkColorMixin(@lightYellow);
+      .linkColorHoverMixin(@lightYellow);
+    }
+}
+
+.ui.category {
+    &.black a { .linkColorHoverMixin(@black); }
+    &.blue a { .linkColorHoverMixin(@blue); }
+    &.green a { .linkColorHoverMixin(@green); }
+    &.grey a { .linkColorHoverMixin(@grey); }
+    &.orange a { .linkColorHoverMixin(@orange); }
+    &.pink a { .linkColorHoverMixin(@pink); }
+    &.purple a { .linkColorHoverMixin(@purple); }
+    &.red a { .linkColorHoverMixin(@red); }
+    &.teal a { .linkColorHoverMixin(@teal); }
+    &.yellow a { .linkColorHoverMixin(@yellow); }
+
+    &.lightBlack a { .linkColorHoverMixin(@lightBlack); }
+    &.lightBlue a { .linkColorHoverMixin(@lightBlue); }
+    &.lightGreen a { .linkColorHoverMixin(@lightGreen); }
+    &.lightGrey a { .linkColorHoverMixin(@lightGrey); }
+    &.lightOrange a { .linkColorHoverMixin(@lightOrange); }
+    &.lightPink a { .linkColorHoverMixin(@lightPink); }
+    &.lightPurple a { .linkColorHoverMixin(@lightPurple); }
+    &.lightRed a { .linkColorHoverMixin(@lightRed); }
+    &.lightTeal a { .linkColorHoverMixin(@lightTeal); }
+    &.lightYellow a { .linkColorHoverMixin(@lightYellow); }
 }

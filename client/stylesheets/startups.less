@@ -1,5 +1,4 @@
 @import "semantic.less";
-@styledBorderRadius: 0.2857rem;
 
 html, body {
     height: 100%;
@@ -38,24 +37,6 @@ section#map-filter {
 
     .menu {
         width: 100%;
-    }
-}
-
-.ui.accordion {
-    .menu {
-        border-radius: 0;
-        box-shadow: none;
-        
-        .item:first-child {
-            border-top: 0px;
-        }
-        .item:last-child {
-            border-bottom: 0px;
-        }
-
-        &:last-child {
-            border-radius: 0px 0px @styledBorderRadius @styledBorderRadius;
-        }
     }
 }
 
