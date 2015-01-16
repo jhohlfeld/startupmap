@@ -1,4 +1,4 @@
-Startups = new Mongo.Collection('startups');
+Startups = new Meteor.Collection('startups');
 
 if (Meteor.isServer) {
 
@@ -43,11 +43,20 @@ if (Meteor.isServer) {
         });
     });
 
+    Meteor.publish("startupFilter", function(category, categoryValue) {
+        check(category, String);
+        check(categoryValue, String);
+        return Startups.find(_.object([category], [{
+            '$regex': '^' + categoryValue + '$',
+            '$options': 'i'
+        }]));
+    });
+
 }
 
 if (Meteor.isClient) {
 
-    Meteor.subscribe('startups');
+    // Meteor.subscribe('startups');
     // Meteor.subscribe('startup');
 
 }

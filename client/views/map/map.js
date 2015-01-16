@@ -1,20 +1,70 @@
 (function() {
-    var map, map_canvas, mapMarkers = [];
+    var map, map_canvas, markers, mapMarkers = [];
 
     var filterIndexMap = ['type', 'industry'];
 
     window.MapController = RouteController.extend({
+        loadingTemplate: 'loading',
+        template: 'map',
+
         onStop: function() {
             map_canvas.detach();
         },
         waitOn: function() {
-            var subscriptions = [function() {
-                return Meteor.subscribe('startups')
-            }];
-            return subscriptions;
+            var category = this.params.category,
+                categoryValue = this.params.value;
+
+            if (Match.test(category, String) && Match.test(categoryValue, String)) {
+                // return Meteor.subscribe('startupFilter', category, categoryValue);
+                return [
+                    Meteor.subscribe('startupFilter', category, categoryValue),
+                    Meteor.subscribe('startups')
+                ];
+            } else {
+                return Meteor.subscribe('startups');
+            }
         },
         data: function() {
-            return Startups.find();
+            var category = this.params.category,
+                categoryValue = this.params.value;
+
+            if (Match.test(category, String) && Match.test(categoryValue, String)) {
+                return Startups.find(_.object([category], [{
+                        '$regex': '^' + categoryValue + '$',
+                        '$options': 'i'
+                    }]));
+                // return [Startups.find(_.object([category], [{
+                //         '$regex': '^' + categoryValue + '$',
+                //         '$options': 'i'
+                //     }])),
+                //     Startups.find()
+                // ];
+            } else {
+                return Startups.find();
+            }
+        },
+        action: function() {
+            this.render('map');
+
+            this.render('mapfilters', {
+                to: 'mapfilters',
+                // waitOn: function() {
+                //     return Meteor.subscribe('startups');
+                // },
+                data: function() {
+                    return Startups.find();
+                }
+            });
+        }
+    });
+
+    Template.mapfilters.events({
+        'click .item': function(e) {
+            Router.go('map.filter', {
+                category: this.category,
+                value: this.name.toLowerCase()
+            });
+            // e.preventDefault();
         }
     });
 
@@ -44,6 +94,9 @@
 
                 map.addControl(zoom);
 
+                markers = new L.MarkerClusterGroup();
+                map.addLayer(markers);
+
             } else {
                 $('#map').replaceWith(map_canvas);
             }
@@ -54,7 +107,7 @@
 
             $('.ui.dropdown').dropdown();
 
-            Deps.nonreactive(function() {
+            Tracker.nonreactive(function() {
                 var accordion = $('.ui.accordion').accordion('open', Session.get('mapfiltersVisible'));
                 accordion.accordion('setting', {
                     onOpen: function() {
@@ -64,7 +117,7 @@
                 });
             });
 
-            $(map.getPanes().markerPane).empty();
+            markers.clearLayers();
             mapMarkers = [];
 
             template.data.forEach(function(startup) {
@@ -74,17 +127,20 @@
                         'marker-color': UI.labelColorHash('type', startup.type)
                     }),
                     marker = L.marker(startup.geolocation.coordinates.reverse(), {
-                        icon: icon
+                        icon: icon,
+                        title: startup.type + ': ' + startup.name
                     });
                 var popup = L.popup({
                     autoPanPaddingTopLeft: L.point(280, 14)
                 }).setContent(Blaze.toHTMLWithData(Template.mapinfo, startup));
 
-                marker.bindPopup(popup).addTo(map);
+                marker.bindPopup(popup);
                 marker.data = startup;
 
                 mapMarkers.push(marker);
             });
+
+            markers.addLayers(mapMarkers);
         });
 
         this.autorun(function(c) {
@@ -103,23 +159,22 @@
         });
     };
 
-    var filterProp = function(data, prop) {
-        var items = _.map(_.groupBy(data.fetch(), prop), function(startups, key) {
-            return {
-                name: key,
-                count: startups.length,
-                startups: startups
-            };
-        });
-        return items;
-    }
+    Template.mapfilters.helpers(_.extend({},
 
-    Template.mapfilters.helpers(
+        // adding helper related to map filter 
+        // (like startup 'type', 'industry' etc.)
         _.object(filterIndexMap, _.map(filterIndexMap, function(f) {
             return function() {
-                return filterProp(Template.parentData(1), f);
+                var items = _.map(_.groupBy(Startups.find().fetch(), f), function(startups, key) {
+                    return {
+                        category: f,
+                        name: key,
+                        count: startups.length,
+                        startups: startups
+                    };
+                });
+                return items;
             };
-        }))
-    );
+        }))));
 
 })();

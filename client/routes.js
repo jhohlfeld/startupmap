@@ -4,7 +4,13 @@ Router.configure({
 });
 
 Router.route('map', {
-    path: '/'
+    path: '/',
+    controller: 'MapController'
+});
+
+Router.route('map.filter', {
+    path: '/:category/:value',
+    controller: 'MapController'
 });
 
 Router.route('/admin', {

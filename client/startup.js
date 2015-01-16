@@ -12,7 +12,7 @@ Meteor.startup(function() {
         Session.set('polymerReady', true);
     });
 
-    Mapbox.load();
+    Mapbox.load('markercluster');
 
     Deps.autorun(function() {
         if (!Mapbox.loaded()) {
