@@ -3,14 +3,14 @@ Router.configure({
     loadingTemplate: 'loading'
 });
 
-Router.route('map', {
-    path: '/',
+Router.route('/', {
+    name: 'map',
     controller: 'MapController'
 });
 
-Router.route('map.filter', {
-    path: '/:category/:value',
-    controller: 'MapController'
+Router.route('/:category/:value', {
+    name: 'map.filter',
+    controller: 'MapFilteredController'
 });
 
 Router.route('/admin', {

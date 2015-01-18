@@ -43,11 +43,11 @@ if (Meteor.isServer) {
         });
     });
 
-    Meteor.publish("startupFilter", function(category, categoryValue) {
+    Meteor.publish("startupsFiltered", function(category, name) {
         check(category, String);
-        check(categoryValue, String);
+        check(name, String);
         return Startups.find(_.object([category], [{
-            '$regex': '^' + categoryValue + '$',
+            '$regex': '^' + name + '$',
             '$options': 'i'
         }]));
     });

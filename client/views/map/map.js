@@ -3,54 +3,57 @@
 
     var filterIndexMap = ['type', 'industry'];
 
-    window.MapController = RouteController.extend({
-        loadingTemplate: 'loading',
-        template: 'map',
+    Session.set('category', {});
+
+    MapController = RouteController.extend({
+        layoutTemplate: 'mapLayout',
 
         onStop: function() {
             map_canvas.detach();
         },
         waitOn: function() {
-            var category = this.params.category,
-                categoryValue = this.params.value;
-
-            if (Match.test(category, String) && Match.test(categoryValue, String)) {
-                // return Meteor.subscribe('startupFilter', category, categoryValue);
-                return [
-                    Meteor.subscribe('startupFilter', category, categoryValue),
-                    Meteor.subscribe('startups')
-                ];
-            } else {
-                return Meteor.subscribe('startups');
-            }
+            return Meteor.subscribe('startups');
         },
         data: function() {
-            var category = this.params.category,
-                categoryValue = this.params.value;
-
-            if (Match.test(category, String) && Match.test(categoryValue, String)) {
-                return Startups.find(_.object([category], [{
-                        '$regex': '^' + categoryValue + '$',
-                        '$options': 'i'
-                    }]));
-                // return [Startups.find(_.object([category], [{
-                //         '$regex': '^' + categoryValue + '$',
-                //         '$options': 'i'
-                //     }])),
-                //     Startups.find()
-                // ];
-            } else {
-                return Startups.find();
-            }
+            return Startups.find();
         },
         action: function() {
-            this.render('map');
+            this.render('map', {
+                to: 'map'
+            });
 
             this.render('mapfilters', {
                 to: 'mapfilters',
-                // waitOn: function() {
-                //     return Meteor.subscribe('startups');
-                // },
+                data: function() {
+                    return Startups.find();
+                }
+            });
+        }
+    });
+
+    MapFilteredController = MapController.extend({
+        waitOn: function() {
+            return [
+                Meteor.subscribe('startupsFiltered', this.params.category, this.params.value),
+                Meteor.subscribe('startups')
+            ];
+        },
+
+        data: function() {
+            var q = {};
+            q[this.params.category] = {
+                '$regex': '^' + this.params.value + '$',
+                '$options': 'i'
+            };
+            return Startups.find(q);
+        },
+
+        action: function() {
+            this.render('map', {
+                to:'map'
+            });
+            this.render('mapfilters', {
+                to: 'mapfilters',
                 data: function() {
                     return Startups.find();
                 }
@@ -64,17 +67,22 @@
                 category: this.category,
                 value: this.name.toLowerCase()
             });
-            // e.preventDefault();
+            e.preventDefault();
         }
     });
 
     Template.map.rendered = function() {
         var template = this;
+
+        console.log('rendering map.');
+
         this.autorun(function(c) {
 
             if (!Session.get('polymerReady') || !Session.get('mapboxReady')) {
                 return;
             }
+
+            var data = Template.currentData();
 
             if (!map_canvas) {
 
@@ -120,7 +128,7 @@
             markers.clearLayers();
             mapMarkers = [];
 
-            template.data.forEach(function(startup) {
+            data.forEach(function(startup) {
                 var icon = L.mapbox.marker.icon({
                         'marker-size': 'large',
                         'marker-symbol': UI.labelIcon('type', startup.type),
@@ -165,7 +173,7 @@
         // (like startup 'type', 'industry' etc.)
         _.object(filterIndexMap, _.map(filterIndexMap, function(f) {
             return function() {
-                var items = _.map(_.groupBy(Startups.find().fetch(), f), function(startups, key) {
+                var items = _.map(_.groupBy(Template.currentData().fetch(), f), function(startups, key) {
                     return {
                         category: f,
                         name: key,

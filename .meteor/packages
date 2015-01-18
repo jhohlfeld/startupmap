@@ -7,7 +7,7 @@
 meteor-platform
 accounts-ui
 accounts-password
-iron:router@0.9.1
+iron:router@1.0.6
 less
 meteorhacks:kadira
 nooitaf:semantic-ui

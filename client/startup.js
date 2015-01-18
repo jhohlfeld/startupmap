@@ -14,15 +14,17 @@ Meteor.startup(function() {
 
     Mapbox.load('markercluster');
 
-    Deps.autorun(function() {
+    Tracker.autorun(function() {
         if (!Mapbox.loaded()) {
             return;
         }
 
+        console.log('mapbox loaded...');
+        Session.set('mapboxReady', true);
+        
         L.mapbox.accessToken = Session.get('mapAccessToken');
         Geocoder.setGeocoder(L.mapbox.geocoder('mapbox.places'));
 
-        Session.set('mapboxReady', true);
     });
 });
 
