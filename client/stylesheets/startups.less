@@ -1,0 +1,52 @@
+@import "semantic.less";
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+core-header-panel {
+    height: 100%;
+    
+    >header {
+        padding: 1rem;
+        
+        h1 {
+            margin: 0;
+        }
+    }
+
+    >main {
+        position: relative;
+    }
+
+    >footer {
+
+    }
+}
+
+@rounded-corner: {
+    border-radius: .25rem;
+};
+
+nav#map-filter {
+
+	position: absolute;
+	left: 1rem;
+	top: 1rem;
+	width: 18rem;
+
+    .menu {
+        width: 100%;
+    }
+}
+
+.container {
+    margin: 2rem;
+}
+
+section#startups.list {
+    .item .description {
+        min-height: rem;
+    }
+}

@@ -1,0 +1,158 @@
+<template name="adminLayout">
+    <core-header-panel vertical layout fit>
+
+        <header class="core-header" horizontal layout>
+            <h1 flex self-center>Startup Map</h1> {{> UserNav}}
+        </header>
+
+        <div class="content" vertical layout fit>
+        
+            <main flex>
+                {{> yield}}
+                
+                {{> yield "adminLayout.modal"}}
+            </main>
+
+            <footer>
+                <small>&copy; 2015 by Jakob Hohlfeld</small>
+            </footer>
+
+        </div>
+
+    </core-header-panel>
+</template>
+
+<template name="admin">
+    <div class="container">
+        <div horizontal layout>
+            <h2 flex>Admin</h2>
+            <a href="/admin/edit-startup" class="ui green button" self-center>
+                <i class="plus icon"></i> Add Startup</a>
+        </div>
+
+        <section id="startups" class="ui big very relaxed celled selection list">
+            {{#each .}} {{> startup}} {{/each}}
+        </section>
+    </div>
+</template>
+
+<template name="startup">
+    <div class="item" data-id="{{_id}}">
+        <a href="" class="right floated compact ui icon basic red button remove-startup">
+            <i class="trash icon"></i>
+            Remove
+        </a>
+        <i class="big map marker icon"></i>
+        <div class="content">
+            <div class="header">{{name}}</div>
+            <div class="description">
+                {{#if website}}
+                <small>{{website}}</small>
+                <br> 
+                {{/if}}
+
+                {{#if location}}
+                <small>{{location}}</small>
+                <br> 
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="editstartup">
+    <div class="ui modal form">
+        <i class="close icon"></i>
+        <div class="header">
+            Add Entry
+        </div>
+        <div class="content">
+            <div class="ui grid">
+                <div class="twelve wide column">
+                    <div class="two fields">
+                        <div class="ten wide field">
+                            <label>Name</label>
+                            <input type="text" name="name" placeholder="Name" />
+                        </div>
+                        <div class="six wide field">
+                            <label>Website</label>
+                            <input type="text" name="website" placeholder="Website URL">
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label>Location</label>
+                        <input type="text" name="location" placeholder="Country, City, Street Address" autocomplete="off" spellcheck="off" data-template="suggestion" />
+                    </div>
+                    <div class="two fields">
+                        <div class="field">
+                            <label>Type</label>
+                            <input type="text" name="type" placeholder="Type">
+                        </div>
+                        <div class="field">
+                            <label>Industry</label>
+                            <input type="text" name="industry" placeholder="Industry">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="four wide column">
+                    <img class="ui medium image" src="/images/image.png" />
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Description</label>
+                <textarea name="description"></textarea>
+            </div>
+
+            <div class="two fields">
+                <div class="field">
+                    <label>Founded</label>
+                    <input type="text" name="founded" placeholder="Year founded">
+                </div>
+                <div class="field">
+                    <label>Head count</label>
+                    <input type="text" name="headcount" placeholder="Head count">
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a class="ui black button">Cancel</a>
+            <a class="ui positive right labeled icon submit button">
+                Save
+                <i class="checkmark icon"></i>
+            </a>
+        </div>
+    </div>
+</template>
+
+<template name="removeconfirm">
+<div class="ui basic modal">
+    <i class="close icon"></i>
+    <div class="header">
+        Please confirm
+    </div>
+    <div class="content">
+        <div class="image">
+            <i class="trash icon"></i>
+        </div>
+        <div class="description">
+            <p>Are you sure about deleting "{{name}}" with all it's related content?</p>
+            <p>
+                <span class="ui red horizontal label">Careful!</span> You will not be able to undo this action!
+            </p>
+        </div>
+    </div>
+    <div class="actions">
+        <div class="two fluid ui inverted buttons">
+            <div class="ui red basic inverted negative button">
+                <i class="remove icon"></i> No
+            </div>
+            <div class="ui green basic inverted positive button">
+                <i class="checkmark icon"></i> Yes
+            </div>
+        </div>
+    </div>
+</div>
+</template>

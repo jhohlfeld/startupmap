@@ -1,0 +1,59 @@
+<template name="mapLayout">
+    <core-header-panel>
+
+        <header class="core-header" horizontal layout>
+            <h1 flex self-center>Startup Map</h1> {{> UserNav}}
+        </header>
+
+        <main class="content" vertical layout fit>
+            {{> yield }}
+            
+            {{> yield "filter"}}
+        </main>
+    </core-header-panel>
+</template>
+
+<template name="map">
+    <section id="map" flex></section>
+</template>
+
+<template name="mapFilter">
+    <nav id="map-filter" class="ui styled fluid accordion">
+        <paper-shadow z="2" style="height: 100%;">
+            <div class="title">
+                <i class="dropdown icon"></i> Type
+            </div>
+            <div class="content ui vertical menu">
+                {{#each type}}
+                <a class="item" href="" data-category="type" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='type' value=name}} label">{{count}}</span></a>
+                {{/each}}
+            </div>
+
+            <div class="title">
+                <i class="dropdown icon"></i> Industry
+            </div>
+            <div class="content ui vertical menu">
+                {{#each industry}}
+                <a class="item" href="" data-category="industry" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='industry' value=name}} label">{{count}}</span></a>
+                {{/each}}
+            </div>
+        </paper-shadow>
+    </nav>
+</template>
+
+<template name="mapinfo">
+    <div class="ui small ribbon {{labelColor key='type' value=type}} label">{{type}}</div>
+    <span>Industry: <a href="" class="ui category {{labelColor key='industry' value=industry}}">{{industry}}</a></span>
+    <h3 class="ui header">{{name}}</h3>
+    <div class="ui divider"></div>
+    <div class="ui list {{labelColor key='type' value=type}} category">
+        <div class="item">{{location}}</div>
+        <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a></div>
+    </div>
+    {{#if description}}
+    <div class="ui divider"></div>
+    <div>
+    {{#markdown}}{{description}}{{/markdown}}
+    </div>
+    {{/if}}
+</template>
