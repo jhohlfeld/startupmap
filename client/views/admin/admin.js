@@ -1,4 +1,4 @@
-var addDialog;
+var addDialog, addDialogView, removeDialogView;
 
 var addDialogModal = function(element, options) {
     var options = options || {};
@@ -24,11 +24,17 @@ var addDialogModal = function(element, options) {
                 });
                 Meteor.call('saveStartup', doc);
                 Router.go('admin');
+            },
+
+            onHidden: function() {
+                Router.go('admin');
             }
         });
     }, element);
 
-    return element.modal('setting', {
+    return element.modal({
+        context: 'body'
+    }).modal('setting', {
         onHidden: options.onHidden || function() {
             Router.go('admin');
         }
@@ -38,108 +44,122 @@ var addDialogModal = function(element, options) {
 AdminController = RouteController.extend({
     template: 'admin',
     layoutTemplate: 'adminLayout',
-    loadingTemplate: 'loading',
 
     waitOn: function() {
-        var subscriptions = [function() {
-            return Meteor.subscribe('startups')
-        }];
+        return [
+            Meteor.subscribe('startupsAll')
+        ];
+    },
+
+    data: function() {
+        return Startups.find();
+    },
+
+    action: function() {
+        this.render('admin');
+    }
+
+});
+
+AdminEditController = AdminController.extend({
+
+    template: 'admin',
+
+    waitOn: function() {
+        var subscriptions = [
+            Meteor.subscribe('startupsAll')
+        ];
+        if (this.params._id) {
+            subscriptions.push(Meteor.subscribe('startup', this.params._id));
+        }
         return subscriptions;
     },
 
     action: function() {
         this.render('admin');
 
-        if (this.route.getName() == 'admin.remove') {
-            this.render('removeconfirm', {
-                to: 'modal',
-                data: Startups.findOne({
-                    _id: this.params._id
-                })
-            });
-            return;
-        }
-        var geocoder = new Geocoder();
         this.render('editstartup', {
-            to: 'modal',
+            to: 'adminLayout.modal',
             data: function() {
-                return {
-                    startup: this.params._id ? Startups.findOne({
+                if (this.params._id) {
+                    return Startups.findOne({
                         _id: this.params._id
-                    }) : {},
-                    showDialog: (this.route.path() !== '/admin'),
-                    geocoder: geocoder
-                };
+                    });
+                } else {
+                    return {};
+                }
             }
         });
-    }
+    },
 
+    onAfterAction: function() {
+        if (addDialog && !addDialog.modal('is active')) {
+            addDialog.modal('show');
+        }
+    }
 });
 
-Template.removeconfirm.rendered = function() {
+Template.admin.rendered = function() {
+    Meteor.log.debug('rendered admin view..');
+};
+
+Template.editstartup.rendered = function() {
+    Meteor.log.debug('rendered admin edit view..');
     var template = this;
+
     this.autorun(function() {
         if (!Session.get('polymerReady')) {
             return;
         }
-        var modal = template.$('.modal').modal('show');
-        modal.modal('setting', {
-            onApprove:function(){
-                Meteor.call('removeStartup', template.data._id);
-                Router.go('admin');
-            },
-            onHidden:function(){
-                Router.go('admin');
-            }
+        if (!addDialog) {
+            addDialog = addDialogModal(template.$('.modal'));
+            addDialog.modal('show');
+        }
+
+        var data = Template.currentData();
+        addDialog.modal.setData(data);
+
+        var element = addDialog.find('input[name=location]'),
+            geocoder = new Geocoder();
+        Meteor.typeahead(element, geocoder.ttAdapter);
+        element.on('typeahead:selected', function(event, suggestion, dataset) {
+            data.geolocation = suggestion.location;
         });
+
     });
 };
 
-Template.admin.rendered = function() {
-    console.log('rendered admin view..');
-};
-
-Template.editstartup.rendered = function() {
+Template.removeconfirm.rendered = function() {
     var template = this;
     this.autorun(function() {
-        if (!Session.get('polymerReady') || !Session.get('mapboxReady')) {
+        var data = Template.currentData();
+
+        if (!Session.get('polymerReady')) {
             return;
         }
-        if (!addDialog) {
-            addDialog = addDialogModal(template.$('.modal'));
-        }
 
-        var data = Template.currentData(template.view);
-        if (data && data.showDialog) {
-            addDialog.modal.setData(data.startup);
-            addDialog.modal('show');
-            var element = addDialog.find('input[name=location]');
-            Meteor.typeahead(element, template.data.geocoder.ttAdapter);
-            element.on('typeahead:selected', function(event, suggestion, dataset) {
-                data.startup.geolocation = suggestion.location;
-                // console.log(event, suggestion, dataset)
-            });
-        } else {
-            addDialog.modal('hide');
-        }
+        template.$('.modal').modal('show').modal('setting', {
+            onApprove: function() {
+                Meteor.call('removeStartup', data._id);
+            },
 
+            onHidden: function() {
+                Blaze.remove(removeDialogView);
+            }
+        });
     });
 };
 
 Template.startup.events({
     'click .item': function(e) {
         var $el = $(e.target);
-        if ($el.hasClass('button')) {
+        if ($el.hasClass('remove-startup')) {
+            e.preventDefault();
+            removeDialogView = Blaze.renderWithData(Template.removeconfirm, this, $('body')[0]);
             return;
         }
         Router.go('admin.edit', {
             _id: $el.closest('.item').data('id')
         });
-    }
-});
-
-Template.admin.helpers({
-    startups: function() {
-        return Startups.find({});
     }
 });

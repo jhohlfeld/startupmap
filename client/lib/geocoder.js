@@ -5,7 +5,7 @@ Geocoder = function() {
 };
 
 Geocoder.prototype.setElement = function(element) {
-    console.log('geocoder: registering element')
+    Meteor.log.debug('geocoder: registering element')
     var self = this;
     var idle = true;
     var sequence = '';
@@ -23,7 +23,7 @@ Geocoder.prototype.setElement = function(element) {
                 throw Meteor.Error('geocoding-error', err);
             }
             idle = true;
-            // console.log(data);
+            // Meteor.log.debug(data);
 
             var locations = _.map(data.results.features, function(f) {
                 return {

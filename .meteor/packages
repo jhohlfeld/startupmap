@@ -5,15 +5,13 @@
 # but you can also edit it by hand.
 
 meteor-platform
-accounts-ui
-accounts-password
-iron:router@1.0.6
-less
-meteorhacks:kadira
-nooitaf:semantic-ui
-pauloborges:mapbox
+insecure
+iron:router
 differential:vulcanize
 meteorhacks:inject-initial
-reactive-var
-jhohlfeld:typeahead
+less
 markdown
+nooitaf:semantic-ui
+pauloborges:mapbox
+jhohlfeld:typeahead
+mrt:trail

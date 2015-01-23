@@ -1,4 +1,5 @@
 Session.set('config', {
+    filterIndexMap: ['type', 'industry'],
     colors: {
         'black': '#1B1C1D',
         'blue': '#2196F3',
@@ -40,7 +41,8 @@ Session.set('config', {
             'real estate': 'grey',
             'marketing': 'red',
             'web development': 'teal',
-            'creative': 'orange'
+            'creative': 'orange',
+            'newspaper': 'orange'
         }
     },
     labelIcons: {
@@ -63,7 +65,8 @@ Session.set('config', {
             'real estate': 'commercial',
             'marketing': 'mobilephone',
             'web development': 'scooter',
-            'creative': 'art-gallery'
+            'creative': 'art-gallery',
+            'newspaper': 'art-gallery'
         }
     }
 });

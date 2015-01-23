@@ -1,14 +1,8 @@
-Router.configure({
-    layoutTemplate: 'mapLayout',
-    loadingTemplate: 'loading'
-});
-
 Router.route('/', {
-    name: 'map',
-    controller: 'MapController'
+    name: 'map'
 });
 
-Router.route('/:category/:value', {
+Router.route('/filter/:category/:value', {
     name: 'map.filter',
     controller: 'MapFilteredController'
 });
@@ -19,15 +13,10 @@ Router.route('/admin', {
 
 Router.route('/admin/edit-startup', {
     name: 'admin.add',
-    controller: 'AdminController'
+    controller: 'AdminEditController'
 });
 
 Router.route('/admin/edit-startup/:_id', {
     name: 'admin.edit',
-    controller: 'AdminController'
-});
-
-Router.route('/admin/remove-startup/:_id', {
-    name: 'admin.remove',
-    controller: 'AdminController'
+    controller: 'AdminEditController'
 });

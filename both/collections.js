@@ -32,31 +32,26 @@ if (Meteor.isServer) {
         }
     });
 
-    Meteor.publish("startups", function() {
+    Meteor.publish('startupsAll', function() {
         return Startups.find();
     });
 
-    Meteor.publish("startup", function(startupId) {
+    Meteor.publish('startup', function(startupId) {
         check(startupId, String);
         return Startups.find({
             '_id': startupId
         });
     });
 
-    Meteor.publish("startupsFiltered", function(category, name) {
+    Meteor.publish('startupsFiltered', function(category, value) {
         check(category, String);
-        check(name, String);
+        check(value, String);
         return Startups.find(_.object([category], [{
-            '$regex': '^' + name + '$',
+            '$regex': '^' + value + '$',
             '$options': 'i'
         }]));
     });
 
 }
 
-if (Meteor.isClient) {
-
-    // Meteor.subscribe('startups');
-    // Meteor.subscribe('startup');
-
-}
+if (Meteor.isClient) {}

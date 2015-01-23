@@ -1,30 +1,30 @@
-Session.set('mapId', 'jhohlfeld.klaa8f80');
-Session.set('mapAccessToken', 'pk.eyJ1IjoiamhvaGxmZWxkIiwiYSI6IjRVTFJXY0EifQ.K8QEmAJhBKxRt3eJ7fA8eA');
-Session.set('mapfiltersVisible', 0);
-
 Meteor.startup(function() {
 
+    // polymer
+
     Session.set('polymerReady', false);
-    Session.set('mapboxReady', false);
 
     window.addEventListener('polymer-ready', function(e) {
-        console.log('polymer ready...')
+        Meteor.log.debug('polymer ready...')
         Session.set('polymerReady', true);
     });
 
-    Mapbox.load('markercluster');
+    // map
 
+    Session.set('mapfiltersVisible', 0);
+    Session.set('mapReady', false);
+    Mapbox.load('markercluster');
+    
     Tracker.autorun(function() {
         if (!Mapbox.loaded()) {
             return;
         }
 
-        console.log('mapbox loaded...');
-        Session.set('mapboxReady', true);
+        Meteor.log.debug('mapbox loaded...');
+        Session.set('mapReady', true);
         
-        L.mapbox.accessToken = Session.get('mapAccessToken');
+        L.mapbox.accessToken = Meteor.settings.public.mapbox.apiToken;
         Geocoder.setGeocoder(L.mapbox.geocoder('mapbox.places'));
-
     });
 });
 
@@ -51,3 +51,4 @@ UI.registerHelper('labelColor', function(context) {
         value = context.hash.value;
     return UI.labelColor(key, value);
 });
+
