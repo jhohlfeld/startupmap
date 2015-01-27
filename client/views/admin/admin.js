@@ -45,6 +45,16 @@ AdminController = RouteController.extend({
     template: 'admin',
     layoutTemplate: 'adminLayout',
 
+    onBeforeAction: function() {
+        if (Meteor.loggingIn()) {
+            this.render('loading');
+        } else if (Meteor.user()) {
+            this.next();
+        } else {
+            this.redirect('accounts.login');
+        }
+    },
+
     waitOn: function() {
         return [
             Meteor.subscribe('startupsAll')

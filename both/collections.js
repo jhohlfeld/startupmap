@@ -52,6 +52,11 @@ if (Meteor.isServer) {
         }]));
     });
 
+    // Accounts.createUser({
+    //     username: 'admin',
+    //     email: 'admin@example.com',
+    //     password: 'admin'
+    // });
 }
 
 if (Meteor.isClient) {}

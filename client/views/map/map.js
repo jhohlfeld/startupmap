@@ -17,10 +17,13 @@ MapController = RouteController.extend({
     },
 
     action: function() {
+
+        Session.set('hideMapFilters', false);
+
         this.render('map');
 
         this.render('mapFilter', {
-            to: 'filter',
+            to: 'mapLayout.interface',
             data: function() {
                 var data = Startups.find({}, {
                     fields: {
@@ -193,3 +196,10 @@ Template.mapFilter.rendered = function() {
         });
     });
 };
+
+Template.mapFilter.helpers({
+    hideMapFilters: function() {
+        return Session.get('hideMapFilters');
+    }
+});
+

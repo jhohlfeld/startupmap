@@ -1,13 +1,33 @@
-<template name="UserNav">
+<template name="userNav">
     <nav self-center>
-        {{#if isAdmin}}
-        <a class="ui icon button" href="/">
-            <i class="remove icon"></i> Leave Admin-Area
-        </a>
+        {{#if userId}}
+
+            {{> userAdminButton}}
+
+            <button class="ui basic black button logout">
+                Logout
+            </button>
+
         {{else}}
-        <a class="ui icon button" href="/admin">
-            <i class="setting icon"></i> Admin-Area
+
+        <a class="ui basic black button {{loginDisabled}}" href="/login">Login</a>
+
+        <a class="ui right labeled icon positive button {{loginDisabled}}" href="/sign-up">
+            <i class="right sign in icon"></i> Sign Up
         </a>
+
         {{/if}}
     </nav>
+</template>
+
+<template name="userAdminButton">
+    {{#if isAdmin}}
+    <a class="ui icon button" href="/">
+        <i class="remove icon"></i> Leave Admin-Area
+    </a>
+    {{else}}
+    <a class="ui icon button" href="/admin">
+        <i class="setting icon"></i> Admin-Area
+    </a>
+    {{/if}}
 </template>

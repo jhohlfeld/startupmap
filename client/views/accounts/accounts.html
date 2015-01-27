@@ -1,0 +1,54 @@
+<template name="accountsLoginform">
+
+    <form id="login-form" class="ui modal form">
+
+        <div class="ui header">
+            Login
+        </div>
+
+        <div class="content">
+
+            {{#if loginBusy}}
+            <div class="ui active dimmer">
+                <div class="ui large loader"></div>
+            </div>
+            {{/if}}
+
+            {{#if loginError}}
+                {{> accountsLoginError}}
+            {{/if}}
+
+            <div class="ui error message"></div>
+
+            <div class="two fields">
+                <div class="field">
+                    <label>Username</label>
+                    <input type="text" name="username" placeholder="Username">
+                </div>
+
+                <div class="field">
+                    <label>Password</label>
+                    <input type="password" name="password" placeholder="Password">
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <div class="ui large cancel button">
+                Cancel
+            </div>
+            <div class="ui large positive submit icon button">
+                <i class="sign in icon"></i> Login
+            </div>
+        </div>
+
+    </form>
+
+</template>
+
+<template name="accountsLoginError">
+  <div class="ui visible error message">
+    <div class="header">Login failed</div>
+    <p>You can only log in with a valid username and password.</p>
+  </div>
+</template>

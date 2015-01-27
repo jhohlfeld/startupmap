@@ -2,13 +2,14 @@
     <core-header-panel>
 
         <header class="core-header" horizontal layout>
-            <h1 flex self-center>Startup Map</h1> {{> UserNav}}
+            <h1 flex self-center>Startup Map</h1> {{> userNav}}
         </header>
 
         <main class="content" vertical layout fit>
             {{> yield }}
             
-            {{> yield "filter"}}
+            {{> yield "mapLayout.interface"}}
+
         </main>
     </core-header-panel>
 </template>
@@ -18,6 +19,7 @@
 </template>
 
 <template name="mapFilter">
+    {{#unless hideMapFilters}}
     <nav id="map-filter" class="ui styled fluid accordion">
         <paper-shadow z="2" style="height: 100%;">
             <div class="title">
@@ -39,6 +41,7 @@
             </div>
         </paper-shadow>
     </nav>
+    {{/unless}}
 </template>
 
 <template name="mapinfo">

@@ -26,6 +26,15 @@ Meteor.startup(function() {
         L.mapbox.accessToken = Meteor.settings.public.mapbox.apiToken;
         Geocoder.setGeocoder(L.mapbox.geocoder('mapbox.places'));
     });
+
+    // accounts
+
+    Session.set('loginDisabled', false);
+
+    Template.registerHelper('userId', function() {
+        return Meteor.userId();
+    });
+    
 });
 
 UI.labelColor = function(key, value) {
