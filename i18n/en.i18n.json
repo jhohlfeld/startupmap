@@ -1,0 +1,34 @@
+{
+    "admin": {
+        "startup": {
+            "Name": "Brand Name",
+            "Website": "Website",
+            "Logo": "Logo",
+            "Location": "Location",
+            "Company": "Company Name",
+            "Industry": "Industry",
+            "Type": "Type",
+            "Operation_area": "Are of Operation",
+            "Social_links": "Social Links",
+            "Video_link": "Video Link",
+            "Date_founded": "Date Founded",
+            "Head_count": "Head Count",
+            "Description": "Description",
+
+            "placeholder": {
+                "name": "Brand or product name",
+                "website": "Website URL",
+                "location": "Country, City, Street Address",
+                "industry": "Industry",
+                "company": "Company",
+                "date_founded": "Date founded",
+                "head_count": "Head count",
+                "video_link": "Video link"
+            },
+
+            "validation": {
+                "name": "Brand name must not be empty."
+            }
+        }
+    }
+}

@@ -1,45 +1,5 @@
-var addDialog, addDialogView, removeDialogView;
-
-var addDialogModal = function(element, options) {
-    var options = options || {};
-    element.modal.setData = $.proxy(options.setData || function(data) {
-        var inputs = $('input,textarea', this);
-
-        inputs.each(function(i, el) {
-            var el = $(el);
-            var val = data[el.attr('name')];
-            el.val(val);
-        });
-
-        return this.modal('setting', {
-
-            //
-            // implement onApprove - SAVE
-            //
-            onApprove: options.onApprove || function() {
-                var doc = data || {};
-                inputs.each(function(i, el) {
-                    var el = $(el);
-                    doc[el.attr('name')] = el.val();
-                });
-                Meteor.call('saveStartup', doc);
-                Router.go('admin');
-            },
-
-            onHidden: function() {
-                Router.go('admin');
-            }
-        });
-    }, element);
-
-    return element.modal({
-        context: 'body'
-    }).modal('setting', {
-        onHidden: options.onHidden || function() {
-            Router.go('admin');
-        }
-    });
-};
+var addDialog, removeDialogView,
+    formValid = new ReactiveVar(false);
 
 AdminController = RouteController.extend({
     template: 'admin',
@@ -71,41 +31,54 @@ AdminController = RouteController.extend({
 
 });
 
-AdminEditController = AdminController.extend({
+var collection = {};
 
-    template: 'admin',
+var saveStartup = function(cp) {
+    _.extend(collection, getValues());
 
-    waitOn: function() {
-        var subscriptions = [
-            Meteor.subscribe('startupsAll')
-        ];
-        if (this.params._id) {
-            subscriptions.push(Meteor.subscribe('startup', this.params._id));
+    console.log(collection);
+
+    Meteor.call('saveStartup', collection);
+};
+
+var setValues = function(doc) {
+    addDialog.form('clear');
+    addDialog.form('set values', doc);
+};
+
+var getValues = function() {
+    return addDialog.form('get values');
+};
+
+Template.admin.events({
+
+    // new
+
+    'click button#edit-startup': function() {
+        addDialog.form('clear');
+        $('.modal').modal('show');
+    }
+});
+
+Template.startup.events({
+
+    // edit
+
+    'click .item[data-id]': function(e) {
+        if ($(e.target).closest('button').length != 0) {
+            return;
         }
-        return subscriptions;
-    },
-
-    action: function() {
-        this.render('admin');
-
-        this.render('editstartup', {
-            to: 'adminLayout.modal',
-            data: function() {
-                if (this.params._id) {
-                    return Startups.findOne({
-                        _id: this.params._id
-                    });
-                } else {
-                    return {};
-                }
-            }
+        collection = Startups.findOne({
+            _id: this._id
         });
+        setValues(collection);
+        $('.modal').modal('show');
     },
 
-    onAfterAction: function() {
-        if (addDialog && !addDialog.modal('is active')) {
-            addDialog.modal('show');
-        }
+    // remove
+
+    'click button.remove-startup': function(e) {
+        Router.current().removeStartup(this._id, function(err, doc) {});
     }
 });
 
@@ -115,25 +88,51 @@ Template.admin.rendered = function() {
 
 Template.editstartup.rendered = function() {
     Meteor.log.debug('rendered admin edit view..');
+
     var template = this;
 
     this.autorun(function() {
         if (!Session.get('polymerReady')) {
             return;
         }
-        if (!addDialog) {
-            addDialog = addDialogModal(template.$('.modal'));
-            addDialog.modal('show');
-        }
+
+        addDialog = $(template.firstNode);
+
+        addDialog.modal({
+            onApprove: function() {
+                return false;
+            }
+        });
+
+        addDialog.form(FormRules.adminStartupEdit, {
+            inline: true,
+            on: 'submit',
+            onSuccess: function() {
+                formValid.set(true);
+            },
+            onFailure: function() {
+                formValid.set(false);
+            }
+        });
+        addDialog.find('select.dropdown').dropdown();
+
+        addDialog.on('submit', function(e) {
+            e.preventDefault();
+
+            if (!formValid.get()) {
+                return;
+            }
+
+            saveStartup();
+            addDialog.modal('hide');
+        })
 
         var data = Template.currentData();
-        addDialog.modal.setData(data);
-
-        var element = addDialog.find('input[name=location]'),
+        var element = template.$('input[name=location]'),
             geocoder = new Geocoder();
         Meteor.typeahead(element, geocoder.ttAdapter);
         element.on('typeahead:selected', function(event, suggestion, dataset) {
-            data.geolocation = suggestion.location;
+            collection.geolocation = suggestion.location;
         });
 
     });
@@ -159,17 +158,3 @@ Template.removeconfirm.rendered = function() {
         });
     });
 };
-
-Template.startup.events({
-    'click .item': function(e) {
-        var $el = $(e.target);
-        if ($el.hasClass('remove-startup')) {
-            e.preventDefault();
-            removeDialogView = Blaze.renderWithData(Template.removeconfirm, this, $('body')[0]);
-            return;
-        }
-        Router.go('admin.edit', {
-            _id: $el.closest('.item').data('id')
-        });
-    }
-});

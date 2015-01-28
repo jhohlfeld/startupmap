@@ -10,9 +10,10 @@ differential:vulcanize
 meteorhacks:inject-initial
 less
 markdown
-nooitaf:semantic-ui
 pauloborges:mapbox
 jhohlfeld:typeahead
 mrt:trail
 reactive-var
 accounts-password
+tap:i18n
+jhohlfeld:semantic-ui

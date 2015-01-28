@@ -4,7 +4,7 @@ if (Meteor.isServer) {
 
     Meteor.methods({
         saveStartup: function(doc) {
-            check(doc, {
+            check(doc, Match.ObjectIncluding({
                 _id: Match.Optional(String),
                 name: String,
                 website: Match.Optional(String),
@@ -16,9 +16,9 @@ if (Meteor.isServer) {
                 type: String,
                 industry: String,
                 description: Match.Optional(String),
-                founded: Match.Optional(String),
+                dateFounded: Match.Optional(String),
                 headcount: Match.Optional(String)
-            });
+            }));
             Startups.upsert({
                 _id: doc._id
             }, doc);

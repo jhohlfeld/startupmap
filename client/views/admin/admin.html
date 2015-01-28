@@ -10,7 +10,7 @@
             <main flex>
                 {{> yield}}
                 
-                {{> yield "adminLayout.modal"}}
+                {{> editstartup}}
             </main>
 
             <footer>
@@ -26,8 +26,8 @@
     <div class="container">
         <div horizontal layout>
             <h2 flex>Admin</h2>
-            <a href="/admin/edit-startup" class="ui green button" self-center>
-                <i class="plus icon"></i> Add Startup</a>
+            <button id="edit-startup" class="ui green button" self-center>
+                <i class="plus icon"></i> Add Startup</button>
         </div>
 
         <section id="startups" class="ui big very relaxed celled selection list">
@@ -38,10 +38,10 @@
 
 <template name="startup">
     <div class="item" data-id="{{_id}}">
-        <a href="" class="right floated compact ui icon basic red button remove-startup">
+        <button class="right floated compact ui icon basic red button remove-startup">
             <i class="trash icon"></i>
             Remove
-        </a>
+        </button>
         <i class="big map marker icon"></i>
         <div class="content">
             <div class="header">{{name}}</div>
@@ -60,99 +60,149 @@
     </div>
 </template>
 
+<!-- edit modal form -->
+
 <template name="editstartup">
-    <div class="ui modal form">
+    <form class="ui modal form">
+        
         <i class="close icon"></i>
+        
         <div class="header">
             Add Entry
         </div>
+
         <div class="content">
             <div class="ui grid">
-                <div class="twelve wide column">
-                    <div class="two fields">
-                        <div class="ten wide field">
-                            <label>Name</label>
-                            <input type="text" name="name" placeholder="Name" />
-                        </div>
-                        <div class="six wide field">
-                            <label>Website</label>
-                            <input type="text" name="website" placeholder="Website URL">
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label>Location</label>
-                        <input type="text" name="location" placeholder="Country, City, Street Address" autocomplete="off" spellcheck="off" data-template="suggestion" />
-                    </div>
-                    <div class="two fields">
-                        <div class="field">
-                            <label>Type</label>
-                            <input type="text" name="type" placeholder="Type">
-                        </div>
-                        <div class="field">
-                            <label>Industry</label>
-                            <input type="text" name="industry" placeholder="Industry">
-                        </div>
-                    </div>
+                <div class="six wide column">
+                    <img class="ui medium image" src="/images/image.png" />
                 </div>
 
-                <div class="four wide column">
-                    <img class="ui medium image" src="/images/image.png" />
+                <div class="ten wide column">
+                    <div class="two fields">
+                        <div class="field">
+                            <label>{{_ 'admin.startup.Name'}}</label>
+                            <input type="text" name="name" placeholder="{{_ 'admin.startup.placeholder.name'}}" />
+                        </div>
+                        <div class="field">
+                            <label>{{_ 'admin.startup.Website'}}</label>
+                            <input type="text" name="website" placeholder="{{_ 'admin.startup.placeholder.website'}}">
+                        </div>
+                    </div>
+                    
+                    <div class="two fields">
+                        <div class="field">
+                            <label>{{_ 'admin.startup.Location'}}</label>
+                            <input type="text" name="location" placeholder="{{_ 'admin.startup.placeholder.location'}}" autocomplete="off" spellcheck="off" data-template="suggestion" />
+                        </div>
+                         <div class="field">
+                            <label>{{_ "admin.startup.Industry"}}</label>
+                            <input type="text" name="industry" placeholder="{{_ 'admin.startup.placeholder.industry'}}">
+                        </div>
+                   </div>
+
+                    <div class="field">
+                        <label>{{_ 'admin.startup.Type'}}</label>
+                        <select name="type" class="ui search dropdown" autocomplete="off">
+                            <option value="">{{_ 'admin.startup.placeholder.type'}}</option>
+                            <option value="startup">Startup</option>
+                            <option value="coworking">Coworking</option>
+                            <option value="investor">Investor</option>
+                            <option value="service">Service</option>
+                            <option value="community">Community</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ui divider"></div>
+
+            <div class="three fields">
+                <div class="field">
+                    <label>{{_ 'admin.startup.Company'}}</label>
+                    <input type="text" name="company" placeholder="{{_ 'admin.startup.placeholder.company'}}" />
+                </div>
+                <div class="field">
+                    <label>{{_ 'admin.startup.Date_founded'}}</label>
+                    <input type="text" name="dateFounded" placeholder="{{_ 'admin.startup.placeholder.date_founded'}}">
+                </div>
+                <div class="field">
+                    <label>{{_ 'admin.startup.Head_count'}}</label>
+                    <input type="text" name="headcount" placeholder="{{_ 'admin.startup.placeholder.head_count'}}">
+                </div>
+            </div>
+
+            <div class="ui divider"></div>
+            
+            <div class="two fields">
+                <div class="eleven wide field">
+                    <div class="field">
+                        <label>{{_ 'admin.startup.Video_link'}}</label>
+                        <input type="text" name="video" placeholder="{{_ 'admin.startup.placeholder.video_link'}}">
+                    </div>
+
+                </div>
+
+                <div class="five wide field">
+                    <div class="field">
+                        <label>{{_ 'admin.startup.Social_links'}}</label>
+                        <input type="text" name="socialFacebook" placeholder="Facebook">
+                    </div>
+                    <div class="field">
+                        <input type="text" name="socialGplus" placeholder="Google+">
+                    </div>
+                    <div class="field">
+                        <input type="text" name="socialTwitter" placeholder="Twitter">
+                    </div>
                 </div>
             </div>
 
             <div class="field">
-                <label>Description</label>
+                <label>{{_ 'admin.startup.Description'}}</label>
                 <textarea name="description"></textarea>
             </div>
 
-            <div class="two fields">
-                <div class="field">
-                    <label>Founded</label>
-                    <input type="text" name="founded" placeholder="Year founded">
-                </div>
-                <div class="field">
-                    <label>Head count</label>
-                    <input type="text" name="headcount" placeholder="Head count">
-                </div>
-            </div>
         </div>
 
         <div class="actions">
-            <a class="ui black button">Cancel</a>
-            <a class="ui positive right labeled icon submit button">
-                Save
+            <div class="ui large cancel button">{{_ 'Cancel'}}</div>
+            <div class="ui large positive right labeled icon submit button">
+                {{_ 'Save'}}
                 <i class="checkmark icon"></i>
-            </a>
+            </div>
         </div>
-    </div>
+    </form>
 </template>
 
+<!-- remove modal -->
+
 <template name="removeconfirm">
-<div class="ui basic modal">
-    <i class="close icon"></i>
-    <div class="header">
-        Please confirm
-    </div>
-    <div class="content">
-        <div class="image">
-            <i class="trash icon"></i>
+
+    <div class="ui basic modal">
+        <i class="close icon"></i>
+        <div class="header">
+            Please confirm
         </div>
-        <div class="description">
-            <p>Are you sure about deleting "{{name}}" with all it's related content?</p>
-            <p>
-                <span class="ui red horizontal label">Careful!</span> You will not be able to undo this action!
-            </p>
-        </div>
-    </div>
-    <div class="actions">
-        <div class="two fluid ui inverted buttons">
-            <div class="ui red basic inverted negative button">
-                <i class="remove icon"></i> No
+        <div class="content">
+            <div class="image">
+                <i class="trash icon"></i>
             </div>
-            <div class="ui green basic inverted positive button">
-                <i class="checkmark icon"></i> Yes
+            <div class="description">
+                <p>Are you sure about deleting "{{name}}" with all it's related content?</p>
+                <p>
+                    <span class="ui red horizontal label">Careful!</span> You will not be able to undo this action!
+                </p>
             </div>
         </div>
+        <div class="actions">
+            <div class="two fluid ui inverted buttons">
+                <div class="ui red basic inverted negative button">
+                    <i class="remove icon"></i> No
+                </div>
+                <div class="ui green basic inverted positive button">
+                    <i class="checkmark icon"></i> Yes
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+
 </template>

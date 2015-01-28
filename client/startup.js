@@ -1,5 +1,8 @@
 Meteor.startup(function() {
 
+    // i18n
+
+
     // polymer
 
     Session.set('polymerReady', false);
