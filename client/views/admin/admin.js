@@ -27,6 +27,12 @@ AdminController = RouteController.extend({
 
     action: function() {
         this.render('admin');
+    },
+
+    onStop: function() {
+        if (addDialog) {
+            addDialog.remove();
+        }
     }
 
 });
@@ -127,11 +133,10 @@ Template.editstartup.rendered = function() {
             addDialog.modal('hide');
         })
 
-        var data = Template.currentData();
-        var element = template.$('input[name=location]'),
-            geocoder = new Geocoder();
-        Meteor.typeahead(element, geocoder.ttAdapter);
-        element.on('typeahead:selected', function(event, suggestion, dataset) {
+        var el = addDialog.find('input[name=location]');
+        Meteor.typeahead(el, GeocoderGoogle.ttAdapter);
+        el.on('typeahead:selected', function(event, suggestion, dataset) {
+            // collection.location = suggestion.value;
             collection.geolocation = suggestion.location;
         });
 

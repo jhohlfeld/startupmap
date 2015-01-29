@@ -25,48 +25,34 @@ Session.set('config', {
         type: {
             'startup': 'red',
             'coworking': 'orange',
-            'accelerator': 'blue',
-            'investor': 'yellow',
-            'services': 'pink',
-            'freelancer': 'teal',
+            'investor': 'blue',
+            'service': 'pink',
             'community': 'green'
         },
         industry: {
             'tech': 'yellow',
-            'lawyers': 'pink',
             'food': 'green',
-            'travel': 'black',
-            'sports': 'purple',
-            'tax agents': 'blue',
-            'real estate': 'grey',
             'marketing': 'red',
-            'web development': 'teal',
-            'creative': 'orange',
-            'newspaper': 'orange'
+            'mobile': 'pink',
+            'ecommerce': 'black',
+            'other': 'purple'
         }
     },
     labelIcons: {
         'type': {
             'startup': 'rocket',
             'coworking': 'building',
-            'accelerator': 'chemist',
-            'investor': 'bank',
-            'services': 'polling-place',
-            'freelancer': 'suitcase',
-            'community': 'village'
+            'investor': 'chemist',
+            'service': 'bank',
+            'community': 'polling-place'
         },
         'industry': {
             'tech': 'circle-stroked',
-            'lawyers': 'town-hall',
-            'food': 'restaurant',
-            'travel': 'rail-metro',
-            'sports': 'swimming',
-            'tax agents': 'town-hall',
-            'real estate': 'commercial',
-            'marketing': 'mobilephone',
-            'web development': 'scooter',
-            'creative': 'art-gallery',
-            'newspaper': 'art-gallery'
+            'food': 'town-hall',
+            'marketing': 'restaurant',
+            'mobile': 'rail-metro',
+            'ecommerce': 'swimming',
+            'other': 'town-hall'
         }
     }
 });
