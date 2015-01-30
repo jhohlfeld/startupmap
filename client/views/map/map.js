@@ -13,18 +13,9 @@ MapController = RouteController.extend({
     },
 
     data: function() {
-        return Startups.find();
-    },
-
-    action: function() {
-
-        Session.set('hideMapFilters', false);
-
-        this.render('map');
-
-        this.render('mapFilter', {
-            to: 'mapLayout.interface',
-            data: function() {
+        return {
+            map: Startups.find(),
+            filter: (function() {
                 var data = Startups.find({}, {
                     fields: {
                         'type': 1,
@@ -46,8 +37,20 @@ MapController = RouteController.extend({
                     type: getCategoryItem('type'),
                     industry: getCategoryItem('industry')
                 };
-            }
-        });
+            })()
+        }
+    },
+
+    action: function() {
+
+        Session.set('hideMapFilters', false);
+
+        this.render('map');
+
+        // this.render('mapFilter', {
+        //     to: 'mapLayout.interface',
+        //     data:
+        // });
     }
 });
 
@@ -161,13 +164,15 @@ Template.map.rendered = function() {
             map.setMapTypeId('map_style');
 
             google.maps.event.addListener(map, "click", function(event) {
-                infowindowOpen.close();
+                if (infowindowOpen) {
+                    infowindowOpen.close();
+                    infowindowOpen = null;
+                }
             });
 
             // controls
 
-            // var filterMap = Blaze.toHTMLWithData();
-            // map.controls[google.maps.ControlPosition.TOP_RIGHT].push(filterMap);
+            var filterMap = Blaze.renderWithData(Template.mapFilter, data.filter, $('body')[0]);
 
         } else {
             $('#map').replaceWith(map_canvas);
@@ -189,7 +194,7 @@ Template.map.rendered = function() {
             });
         });
 
-        data.forEach(function(startup) {
+        data.map.forEach(function(startup) {
             if (!startup.geolocation || !startup.geolocation.coordinates) {
                 return;
             }
@@ -255,6 +260,10 @@ Template.mapFilter.rendered = function() {
                 Session.set('mapfiltersVisible', index);
             }
         });
+
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(template.firstNode);
+        $(template.firstNode).show();
+
     });
 };
 
