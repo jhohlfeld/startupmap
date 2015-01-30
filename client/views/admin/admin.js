@@ -1,4 +1,4 @@
-var addDialog, removeDialogView,
+var addDialog, removeDialog,
     formValid = new ReactiveVar(false);
 
 AdminController = RouteController.extend({
@@ -22,7 +22,11 @@ AdminController = RouteController.extend({
     },
 
     data: function() {
-        return Startups.find();
+        return {
+            list: Startups.find(),
+            edit: this.editStartup.get(),
+            remove: this.removeStartup.get()
+        };
     },
 
     action: function() {
@@ -30,36 +34,24 @@ AdminController = RouteController.extend({
     },
 
     onStop: function() {
-        if (addDialog) {
-            addDialog.remove();
-        }
-    }
+
+        // clean up the modal mess
+
+        $('.ui.modal').remove();
+    },
+
+    editStartup: new ReactiveVar(null),
+
+    removeStartup: new ReactiveVar(null)
 
 });
-
-var collection = {};
-
-var saveStartup = function(cp) {
-    _.extend(collection, getValues());
-    Meteor.call('saveStartup', collection);
-};
-
-var setValues = function(doc) {
-    addDialog.form('clear');
-    addDialog.form('set values', doc);
-};
-
-var getValues = function() {
-    return addDialog.form('get values');
-};
 
 Template.admin.events({
 
     // new
 
     'click button#edit-startup': function() {
-        addDialog.form('clear');
-        $('.modal').modal('show');
+        Router.current().editStartup.set({});
     }
 });
 
@@ -71,17 +63,15 @@ Template.startup.events({
         if ($(e.target).closest('button').length != 0) {
             return;
         }
-        collection = Startups.findOne({
+        Router.current().editStartup.set(Startups.findOne({
             _id: this._id
-        });
-        setValues(collection);
-        $('.modal').modal('show');
+        }));
     },
 
     // remove
 
     'click button.remove-startup': function(e) {
-        Router.current().removeStartup(this._id, function(err, doc) {});
+        Router.current().removeStartup.set(this);
     }
 });
 
@@ -90,72 +80,102 @@ Template.admin.rendered = function() {
 };
 
 Template.editstartup.rendered = function() {
-    Meteor.log.debug('rendered admin edit view..');
-
     var template = this;
-
     this.autorun(function() {
+
+        Meteor.log.debug('(re)render editstartup view');
+
+        var data = Template.currentData();
+
+        if (!data) {
+            return;
+        }
         if (!Session.get('polymerReady')) {
             return;
         }
 
-        addDialog = $(template.firstNode);
+        if (!addDialog) {
+            addDialog = $(template.firstNode);
 
-        addDialog.modal({
-            onApprove: function() {
-                return false;
-            }
-        });
+            addDialog.modal({
+                onApprove: function() {
+                    return false;
+                },
+                onHidden: function() {
+                    Router.current().editStartup.set(null);
+                }
+            });
 
-        addDialog.form(FormRules.adminStartupEdit, {
-            inline: true,
-            on: 'submit',
-            onSuccess: function() {
-                formValid.set(true);
-            },
-            onFailure: function() {
-                formValid.set(false);
-            }
-        });
-        addDialog.find('select.dropdown').dropdown();
+            addDialog.form(FormRules.adminStartupEdit, {
+                inline: true,
+                on: 'submit',
+                onSuccess: function() {
+                    formValid.set(true);
+                },
+                onFailure: function() {
+                    formValid.set(false);
+                }
+            });
 
-        addDialog.on('submit', function(e) {
-            e.preventDefault();
+            addDialog.find('select.dropdown').dropdown();
 
-            if (!formValid.get()) {
-                return;
-            }
+            addDialog.on('submit', function(e) {
+                e.preventDefault();
 
-            saveStartup();
-            addDialog.modal('hide');
-        })
+                if (!formValid.get()) {
+                    return;
+                }
 
-        var el = addDialog.find('input[name=location]');
-        Meteor.typeahead(el, GeocoderGoogle.ttAdapter);
-        el.on('typeahead:selected', function(event, suggestion, dataset) {
-            collection.geolocation = suggestion.location;
-        });
+                var doc = _.extend({}, Router.current().editStartup.get(),
+                    addDialog.form('get values'));
+                Meteor.call('saveStartup', doc)
+
+                // saveStartup();
+                addDialog.modal('hide');
+            })
+
+            var el = addDialog.find('input[name=location]');
+            Meteor.typeahead(el, GeocoderGoogle.ttAdapter);
+            el.on('typeahead:selected', function(event, suggestion, dataset) {
+                collection.geolocation = suggestion.location;
+            });
+        }
+
+        addDialog.form('clear').form('set values', data).modal('show');
 
     });
 };
 
-Template.removeconfirm.rendered = function() {
+Template.removestartup.rendered = function() {
     var template = this;
     this.autorun(function() {
+
+        Meteor.log.debug('(re)render removestartup view');
+
         var data = Template.currentData();
 
+        if (!data) {
+            return;
+        }
         if (!Session.get('polymerReady')) {
             return;
         }
 
-        template.$('.modal').modal('show').modal('setting', {
-            onApprove: function() {
-                Meteor.call('removeStartup', data._id);
-            },
+        if (!removeDialog) {
+            removeDialog = $(template.firstNode);
 
-            onHidden: function() {
-                Blaze.remove(removeDialogView);
-            }
-        });
+            removeDialog.modal('setting', {
+                onApprove: function() {
+                    Meteor.call('removeStartup',
+                        Router.current().removeStartup.get()._id);
+                },
+
+                onHidden: function() {
+                    Router.current().removeStartup.set(null);
+                }
+            });
+        }
+
+        removeDialog.modal('show');
     });
 };

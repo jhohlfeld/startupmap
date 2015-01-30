@@ -8,9 +8,7 @@
         <div class="content" vertical layout fit>
         
             <main flex>
-                {{> yield}}
-                
-                {{> editstartup}}
+                {{> yield}}                
             </main>
 
             <footer>
@@ -22,7 +20,13 @@
     </core-header-panel>
 </template>
 
+<!-- general template -->
+
 <template name="admin">
+
+    {{> Template.dynamic template="editstartup" data=edit}}
+    {{> Template.dynamic template="removestartup" data=remove}}
+
     <div class="container">
         <div horizontal layout>
             <h2 flex>Admin</h2>
@@ -31,10 +35,12 @@
         </div>
 
         <section id="startups" class="ui big very relaxed celled selection list">
-            {{#each .}} {{> startup}} {{/each}}
+            {{#each list }} {{> startup}} {{/each}}
         </section>
     </div>
 </template>
+
+<!-- single startup in the list -->
 
 <template name="startup">
     <div class="item" data-id="{{_id}}">
@@ -63,7 +69,7 @@
 <!-- edit modal form -->
 
 <template name="editstartup">
-    <form class="ui modal form">
+    <form class="ui modal form" id="editstartup">
         
         <i class="close icon"></i>
         
@@ -175,9 +181,9 @@
 
 <!-- remove modal -->
 
-<template name="removeconfirm">
+<template name="removestartup">
 
-    <div class="ui basic modal">
+    <div class="ui basic modal" id="removestartup">
         <i class="close icon"></i>
         <div class="header">
             Please confirm
