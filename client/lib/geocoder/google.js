@@ -3,7 +3,7 @@ GeocoderGoogle = {};
 var url = 'https://maps.google.com/maps/api/geocode/json',
     params = {
         address: '',
-        components: 'route|country:DE',
+        components: 'route',
         sensor: true
     };
 
@@ -31,7 +31,7 @@ GeocoderGoogle.ttAdapter = function(query, cb) {
                 value: f.formatted_address,
                 location: {
                     type: 'Point',
-                    coordinates: _.values(_.pick(f.geometry.location, 'lng', 'lat'))
+                    coordinates: _.values(_.pick(f.geometry.location, 'lat', 'lng'))
                 }
             }
         });

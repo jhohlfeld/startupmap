@@ -53,7 +53,6 @@ mrt:trail@0.1.2
 npm-bcrypt@0.7.7
 observe-sequence@1.0.4
 ordered-dict@1.0.2
-pauloborges:mapbox@2.1.4_2
 random@1.0.2
 reactive-dict@1.0.5
 reactive-var@1.0.4

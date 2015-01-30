@@ -15,20 +15,6 @@ Meteor.startup(function() {
     // map
 
     Session.set('mapfiltersVisible', 0);
-    Session.set('mapReady', false);
-    Mapbox.load('markercluster');
-    
-    Tracker.autorun(function() {
-        if (!Mapbox.loaded()) {
-            return;
-        }
-
-        Meteor.log.debug('mapbox loaded...');
-        Session.set('mapReady', true);
-        
-        L.mapbox.accessToken = Meteor.settings.public.mapbox.apiToken;
-        Geocoder.setGeocoder(L.mapbox.geocoder('mapbox.places'));
-    });
 
     // accounts
 

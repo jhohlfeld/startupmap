@@ -41,9 +41,6 @@ var collection = {};
 
 var saveStartup = function(cp) {
     _.extend(collection, getValues());
-
-    console.log(collection);
-
     Meteor.call('saveStartup', collection);
 };
 
@@ -136,7 +133,6 @@ Template.editstartup.rendered = function() {
         var el = addDialog.find('input[name=location]');
         Meteor.typeahead(el, GeocoderGoogle.ttAdapter);
         el.on('typeahead:selected', function(event, suggestion, dataset) {
-            // collection.location = suggestion.value;
             collection.geolocation = suggestion.location;
         });
 

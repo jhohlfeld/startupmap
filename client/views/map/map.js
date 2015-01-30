@@ -69,11 +69,12 @@ MapFilteredController = MapController.extend({
 
 Template.map.rendered = function() {
     var template = this;
+    var infowindowOpen;
 
     this.autorun(function() {
         var data = Template.currentData()
 
-        if (!Session.get('polymerReady') || !Session.get('mapReady')) {
+        if (!Session.get('polymerReady')) {
             return;
         }
 
@@ -83,20 +84,90 @@ Template.map.rendered = function() {
 
             map_canvas = $('#map');
 
-            Meteor.log.debug('initializing mapbox');
+            Meteor.log.debug('initializing map');
 
-            map = L.mapbox.map('map', mapId, {
-                zoomControl: false
+            // Create an array of styles.
+            var mapColor = '#5bbd72',
+                styles = [{
+                    "featureType": "water",
+                    "stylers": [{
+                        "color": mapColor
+                    }]
+                }, {
+                    "featureType": "road.highway",
+                    "elementType": "geometry",
+                    "stylers": [{
+                        "visibility": "simplified"
+                    }, {
+                        "color": mapColor
+                    }, {
+                        "gamma": 0.67
+                    }]
+                }, {
+                    "featureType": "road",
+                    "elementType": "labels",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "administrative.province",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "poi",
+                    "stylers": [{
+                        "visibility": "off"
+                    }]
+                }, {
+                    "featureType": "landscape",
+                    "stylers": [{
+                        "color": mapColor
+                    }, {
+                        "visibility": "on"
+                    }, {
+                        "gamma": 10
+                    }, {
+                        "lightness": 50
+                    }]
+                }];
+
+            // Create a new StyledMapType object, passing it the array of styles,
+            // as well as the name to be displayed on the map type control.
+            var styledMap = new google.maps.StyledMapType(styles, {
+                name: "Styled Map"
             });
 
-            var zoom = L.control.zoom({
-                position: 'topright'
+            var mapOptions = {
+                center: new google.maps.LatLng(51.1642292, 10.4541194),
+                zoom: 6,
+                disableDefaultUI: true,
+                zoomControl: true,
+                zoomControlOptions: {
+                    position: google.maps.ControlPosition.TOP_RIGHT,
+                    style: google.maps.ZoomControlStyle.SMALL
+                },
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                mapTypeControlOptions: {
+                    mapTypeIds: [google.maps.MapTypeId.ROADMAP, 'map_style']
+                }
+
+            };
+
+            map = new google.maps.Map(map_canvas[0], mapOptions);
+
+            //Associate the styled map with the MapTypeId and set it to display.
+            map.mapTypes.set('map_style', styledMap);
+            map.setMapTypeId('map_style');
+
+            google.maps.event.addListener(map, "click", function(event) {
+                infowindowOpen.close();
             });
 
-            map.addControl(zoom);
+            // controls
 
-            markers = new L.MarkerClusterGroup();
-            map.addLayer(markers);
+            // var filterMap = Blaze.toHTMLWithData();
+            // map.controls[google.maps.ControlPosition.TOP_RIGHT].push(filterMap);
 
         } else {
             $('#map').replaceWith(map_canvas);
@@ -118,52 +189,42 @@ Template.map.rendered = function() {
             });
         });
 
-        markers.clearLayers();
-        mapMarkers = [];
-
         data.forEach(function(startup) {
             if (!startup.geolocation || !startup.geolocation.coordinates) {
                 return;
             }
 
-            var icon = L.mapbox.marker.icon({
-                    'marker-size': 'large',
-                    'marker-symbol': UI.labelIcon('type', startup.type),
-                    'marker-color': UI.labelColorHash('type', startup.type)
-                }),
-                marker = L.marker(startup.geolocation.coordinates.reverse(), {
-                    icon: icon,
+            var c = startup.geolocation.coordinates,
+                marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(c[0], c[1]),
+                    map: map,
                     title: startup.type + ': ' + startup.name
                 });
-            var popup = L.popup({
-                autoPanPaddingTopLeft: L.point(280, 14)
-            }).setContent(Blaze.toHTMLWithData(Template.mapinfo, startup));
 
-            marker.bindPopup(popup);
-            marker.data = startup;
-
-            mapMarkers.push(marker);
-        });
-
-        markers.addLayers(mapMarkers);
-    });
-
-    this.autorun(function(c) {
-        var filterIndexMap = Session.get('config').filterIndexMap,
-            category = filterIndexMap[Session.get('mapfiltersVisible')];
-
-        Meteor.log.debug('mapfilter changed');
-
-        mapMarkers.forEach(function(marker) {
-            var icon = L.mapbox.marker.icon({
-                'marker-size': 'large',
-                'marker-symbol': UI.labelIcon(category, marker.data[category]),
-                'marker-color': UI.labelColorHash(category, marker.data[category])
+            var infowindow = new google.maps.InfoWindow({
+                maxWidth: 400
             });
-            marker.setIcon(icon);
+
+            google.maps.event.addListener(marker, 'click', function() {
+                if (infowindowOpen && infowindowOpen !== infowindow) {
+                    infowindowOpen.close();
+                }
+                var html = $(Blaze.toHTMLWithData(Template.mapinfo, startup));
+                html.find('.description').find('h1,h2,h3').each(function(e) {
+                    var nodeName = 'h' + (parseInt(this.nodeName.substr(1)) + 2);
+                    var oldNode = $(this),
+                        newNode = $('<' + nodeName + '>', {
+                            text: oldNode.text()
+                        });
+                    oldNode.children().appendTo(newNode);
+                    oldNode.replaceWith(newNode);
+                });
+                infowindow.setContent(html[0]);
+                infowindow.open(map, marker);
+                infowindowOpen = infowindow;
+            });
         });
     });
-
 }
 
 Template.mapFilter.rendered = function() {
@@ -202,4 +263,3 @@ Template.mapFilter.helpers({
         return Session.get('hideMapFilters');
     }
 });
-

@@ -10,7 +10,6 @@ differential:vulcanize
 meteorhacks:inject-initial
 less
 markdown
-pauloborges:mapbox
 jhohlfeld:typeahead
 mrt:trail
 reactive-var

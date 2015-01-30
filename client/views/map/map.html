@@ -6,9 +6,7 @@
         </header>
 
         <main class="content" vertical layout fit>
-            {{> yield }}
-            
-            {{> yield "mapLayout.interface"}}
+            {{> yield }} {{> yield "mapLayout.interface"}}
 
         </main>
     </core-header-panel>
@@ -27,8 +25,7 @@
             </div>
             <div class="content ui vertical menu">
                 {{#each type}}
-                <a class="item" href="" data-category="type" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='type' value=name}} label">{{count}}</span></a>
-                {{/each}}
+                <a class="item" href="" data-category="type" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='type' value=name}} label">{{count}}</span></a> {{/each}}
             </div>
 
             <div class="title">
@@ -36,8 +33,7 @@
             </div>
             <div class="content ui vertical menu">
                 {{#each industry}}
-                <a class="item" href="" data-category="industry" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='industry' value=name}} label">{{count}}</span></a>
-                {{/each}}
+                <a class="item" href="" data-category="industry" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='industry' value=name}} label">{{count}}</span></a> {{/each}}
             </div>
         </paper-shadow>
     </nav>
@@ -45,18 +41,20 @@
 </template>
 
 <template name="mapinfo">
-    <div class="ui small ribbon {{labelColor key='type' value=type}} label">{{type}}</div>
-    <span>Industry: <a href="" class="ui category {{labelColor key='industry' value=industry}}">{{industry}}</a></span>
-    <h3 class="ui header">{{name}}</h3>
-    <div class="ui divider"></div>
-    <div class="ui list {{labelColor key='type' value=type}} category">
-        <div class="item">{{location}}</div>
-        <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a></div>
+    <div class="mapinfo">
+        <h2 class="ui dividing header">{{name}}</h2>
+        <div class="ui small ribbon {{labelColor key='type' value=type}} label">{{type}}</div>
+        <span>Industry: <a href="" class="ui category {{labelColor key='industry' value=industry}}">{{industry}}</a></span>
+        <div class="ui list {{labelColor key='type' value=type}} category">
+            <div class="item">{{location}}</div>
+            <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a>
+            </div>
+        </div>
+        {{#if description}}
+        <div class="ui divider"></div>
+        <div class="description">
+            {{#markdown}}{{description}}{{/markdown}}
+        </div>
+        {{/if}}
     </div>
-    {{#if description}}
-    <div class="ui divider"></div>
-    <div>
-    {{#markdown}}{{description}}{{/markdown}}
-    </div>
-    {{/if}}
 </template>
