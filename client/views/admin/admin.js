@@ -137,7 +137,8 @@ Template.editstartup.rendered = function() {
             var el = addDialog.find('input[name=location]');
             Meteor.typeahead(el, GeocoderGoogle.ttAdapter);
             el.on('typeahead:selected', function(event, suggestion, dataset) {
-                collection.geolocation = suggestion.location;
+                var col = Router.current().editStartup.get();
+                col.geolocation = suggestion.location;
             });
         }
 
