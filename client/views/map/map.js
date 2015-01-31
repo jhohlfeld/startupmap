@@ -13,32 +13,7 @@ MapController = RouteController.extend({
     },
 
     data: function() {
-        return {
-            map: Startups.find(),
-            filter: (function() {
-                var data = Startups.find({}, {
-                    fields: {
-                        'type': 1,
-                        'industry': 1
-                    }
-                }).fetch();
-
-                var getCategoryItem = function(category) {
-                    var d = _.groupBy(data, category);
-                    return _.map(d, function(v, k) {
-                        return {
-                            title: k,
-                            name: k.toLowerCase(),
-                            count: v.length
-                        };
-                    });
-                };
-                return {
-                    type: getCategoryItem('type'),
-                    industry: getCategoryItem('industry')
-                };
-            })()
-        }
+        return Startups.find();
     },
 
     action: function() {
@@ -46,11 +21,6 @@ MapController = RouteController.extend({
         Session.set('hideMapFilters', false);
 
         this.render('map');
-
-        // this.render('mapFilter', {
-        //     to: 'mapLayout.interface',
-        //     data:
-        // });
     }
 });
 
@@ -172,7 +142,9 @@ Template.map.rendered = function() {
 
             // controls
 
-            var filterMap = Blaze.renderWithData(Template.mapFilter, data.filter, $('body')[0]);
+            var mapFilter = $('#map-filter');
+            map.controls[google.maps.ControlPosition.TOP_LEFT].push(mapFilter[0]);
+            mapFilter.show();
 
         } else {
             $('#map').replaceWith(map_canvas);
@@ -194,7 +166,7 @@ Template.map.rendered = function() {
             });
         });
 
-        data.map.forEach(function(startup) {
+        data.forEach(function(startup) {
             if (!startup.geolocation || !startup.geolocation.coordinates) {
                 return;
             }
@@ -231,44 +203,3 @@ Template.map.rendered = function() {
         });
     });
 }
-
-Template.mapFilter.rendered = function() {
-    var template = this;
-    this.autorun(function() {
-
-        if (!Session.get('polymerReady')) {
-            return;
-        }
-
-        template.$('.accordion a.item').each(function() {
-            var $el = $(this);
-            var params = {
-                category: $el.data('category'),
-                value: $el.data('value')
-            };
-            $el.on('click', function(e) {
-                Router.go('map.filter', params);
-                e.preventDefault();
-            });
-        });
-
-        var filtersOpen = Session.get('mapfiltersVisible') || 0,
-            accordion = $('.ui.accordion').accordion('open', filtersOpen);
-        accordion.accordion('setting', {
-            onOpen: function() {
-                var index = Math.floor($(this).index() / 2);
-                Session.set('mapfiltersVisible', index);
-            }
-        });
-
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(template.firstNode);
-        $(template.firstNode).show();
-
-    });
-};
-
-Template.mapFilter.helpers({
-    hideMapFilters: function() {
-        return Session.get('hideMapFilters');
-    }
-});

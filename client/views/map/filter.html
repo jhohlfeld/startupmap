@@ -1,0 +1,17 @@
+<template name="mapFilter">
+    <div id="map-filter" style="display: none">
+        <paper-shadow z="2" style="height: 100%;">
+	        <div class="ui vertical menu">
+	        {{#each items.industry}}
+	        	{{> mapFilterItem}}
+	        {{/each}}
+	        </div>
+        </paper-shadow>
+    </div>
+</template>
+
+<template name="mapFilterItem">
+<a class="{{labelColor key='industry' value=name}} {{active}} {{disabled}} item" href="" data-category="industry">
+	{{title}} 
+	<div class="ui {{labelColor key='industry' value=name}} {{disabled}} label">{{count}}</div></a>
+</template>

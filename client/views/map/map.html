@@ -6,8 +6,8 @@
         </header>
 
         <main class="content" vertical layout fit>
-            {{> yield }} 
-            {{> yield "mapLayout.interface"}}
+            {{> yield }}
+            {{> mapFilter }}
 
         </main>
     </core-header-panel>
@@ -15,32 +15,6 @@
 
 <template name="map">
     <section id="map" flex></section>
-</template>
-
-<template name="mapFilter">
-    <div id="map-filter" style="display: none">
-    {{#unless hideMapFilters}}
-        <nav class="ui styled fluid accordion">
-            <paper-shadow z="2" style="height: 100%;">
-                <div class="title">
-                    <i class="dropdown icon"></i> Type
-                </div>
-                <div class="content ui vertical menu">
-                    {{#each type}}
-                    <a class="item" href="" data-category="type" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='type' value=name}} label">{{count}}</span></a> {{/each}}
-                </div>
-
-                <div class="title">
-                    <i class="dropdown icon"></i> Industry
-                </div>
-                <div class="content ui vertical menu">
-                    {{#each industry}}
-                    <a class="item" href="" data-category="industry" data-value="{{name}}">{{title}} <span class="ui {{labelColor key='industry' value=name}} label">{{count}}</span></a> {{/each}}
-                </div>
-            </paper-shadow>
-        </nav>
-    {{/unless}}
-    </div>
 </template>
 
 <template name="mapinfo">
