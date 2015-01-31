@@ -4,7 +4,7 @@ Router.route('/', {
 
 Router.route('/filter/:category/:value', {
     name: 'map.filter',
-    controller: 'MapFilteredController'
+    controller: 'MapController'
 });
 
 Router.route('/admin', {

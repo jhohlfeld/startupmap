@@ -1,4 +1,14 @@
-var activeItem = new ReactiveVar(null);
+var activeItem = new ReactiveVar(null),
+    params = new ReactiveVar();
+
+Tracker.autorun(function() {
+    var controller = Router.current();
+
+    if (!controller) {
+        return;
+    }
+    params.set(controller.getParams());
+});
 
 Template.mapFilter.helpers({
     items: function() {
@@ -9,22 +19,31 @@ Template.mapFilter.helpers({
             }
         }).fetch();
 
+        var p = params.get();
+
         var getCategoryItem = function(category) {
             var d = _.groupBy(data, category);
             return _.map(d, function(v, k) {
                 var name = k.toLowerCase();
-                return {
+                var result = {
                     _id: category + '.' + name,
+                    category: category,
                     title: k,
                     name: name,
                     count: v.length
                 };
+
+                if (p && p.category === category && p.value === name) {
+                    activeItem.set(result);
+                }
+
+                return result;
             });
         };
         return {
             type: getCategoryItem('type'),
             industry: getCategoryItem('industry')
-        };
+        }
     },
 
     hideMapFilters: function() {
@@ -43,21 +62,20 @@ Template.mapFilterItem.helpers({
 });
 
 Template.mapFilterItem.rendered = function() {
-    var template = this;
-    this.autorun(function() {
+    var data = Template.currentData();
 
-        if (!Session.get('polymerReady')) {
-            return;
+    $(this.find('.item')).on('click', function(e) {
+        e.preventDefault();
+        var a = activeItem.get();
+        if (a && a._id === data._id) {
+            activeItem.set(null);
+            Router.go('map');
+        } else {
+            activeItem.set(data);
+            Router.go('map.filter', {
+                category: data.category,
+                value: data.name
+            });
         }
-
-        var data = Template.currentData();
-
-        template.$('.item').on('click', function() {
-            if (activeItem.get() === data) {
-                activeItem.set(null);
-            } else {
-                activeItem.set(data);
-            }
-        });
     });
 };
