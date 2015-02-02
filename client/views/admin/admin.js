@@ -11,7 +11,7 @@ AdminController = RouteController.extend({
         } else if (Meteor.user()) {
             this.next();
         } else {
-            this.redirect('accounts.login');
+            this.redirect('map');
         }
     },
 

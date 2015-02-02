@@ -12,8 +12,10 @@ Template.userNav.helpers({
 
 Template.userNav.events({
 	'click button.logout':function(){
-		Meteor.logout(function(){
-			Router.go('map');
-		});
+		Meteor.logout();
+	},
+
+	'click button.login':function(){
+		Session.set('showLogin', true);
 	}
 });

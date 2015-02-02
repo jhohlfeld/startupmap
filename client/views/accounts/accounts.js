@@ -1,67 +1,35 @@
-var modal, nextRoute = 'map';
+Session.set('showLogin', false);
 
-AccountsController = RouteController.extend({
-
-    layoutTemplate: 'mapLayout',
-    template: 'map',
-
-    waitOn: function() {
-        return [
-            Meteor.subscribe('startupsAll')
-        ];
-    },
-
-    data: function() {
-        return Startups.find();
-    },
-
-    action: function() {
-
-        Session.set('loginDisabled', true);
-        Session.set('hideMapFilters', true);
-
-        this.render();
-
-        this.render('accountsLoginform', {
-            to: 'mapLayout.interface'
-        });
-    },
-
-    onStop: function() {
-        if (modal) {
-            modal.modal('hide');
-        }
-        Session.set('loginDisabled', false);
-    },
-
-    loginBusy: (new ReactiveVar(false)),
-
-    loginError: (new ReactiveVar(false))
-
-});
+var form,
+    nextRoute = 'admin',
+    loginBusy = new ReactiveVar(false),
+    loginError = new ReactiveVar(false);
 
 Template.accountsLoginform.rendered = function() {
     var template = this;
 
     this.autorun(function() {
-        if (!Session.get('polymerReady')) {
+        if (!Session.get('polymerReady') || !Session.get('showLogin')) {
             return;
         }
 
-        modal = template.$('.modal');
+        form = $(template.find('form'));
 
-        modal.modal({
+        form.modal({
             'transition': 'vertical flip',
-            'closable': false,
             onApprove: function() {
                 return false;
             },
             onDeny: function() {
-                Router.go(nextRoute);
+                form.form('clear');
+                Session.set('showLogin', false);
+            },
+            onHidden: function() {
+                Session.set('showLogin', false);
             }
         }).modal('show');
 
-        $(template.firstNode).form({
+        form.form({
             username: {
                 identifier: 'username',
                 rules: [{
@@ -81,43 +49,36 @@ Template.accountsLoginform.rendered = function() {
             'onSuccess': function(e) {
                 e.preventDefault();
 
-                Meteor.log.debug('', e);
-                setBusy(true);
+                Meteor.log.debug('recieving login request', e);
+                loginBusy.set(true);
 
-                var username = modal.find('[name="username"]').val(),
-                    password = modal.find('[name="password"]').val();
+                var username = form.find('[name="username"]').val(),
+                    password = form.find('[name="password"]').val();
                 Meteor.loginWithPassword(username, password, function(err) {
-                    setBusy(false);
+                    loginBusy.set(false);
                     if (err) {
                         Meteor.log.error('unable to log in');
-                        setError(true);
+                        loginError.set(true);
                         return;
                     }
+                    form.modal('hide');
                     Router.go(nextRoute);
                 });
             },
 
             onValid: function(e) {
                 Meteor.log.debug('validated field', e);
-                setError(false);
+                loginError.set(false);
             }
         });
     });
 };
 
-var setBusy = function(busy) {
-    Router.current().loginBusy.set(busy);
-};
-
-var setError = function(error) {
-    Router.current().loginError.set(error);
-}
-
 Template.accountsLoginform.helpers({
     loginBusy: function() {
-        return Iron.controller().loginBusy.get();
+        return loginBusy.get();
     },
     loginError: function() {
-        return Iron.controller().loginError.get();
+        return loginError.get();
     }
 });
