@@ -1,4 +1,4 @@
-var addDialog, removeDialog,
+var addDialog, form, removeDialog,
     formValid = new ReactiveVar(false);
 
 AdminController = RouteController.extend({
@@ -106,7 +106,7 @@ Template.editstartup.rendered = function() {
                 }
             });
 
-            addDialog.form(FormRules.adminStartupEdit, {
+            form = new Forms.adminStartupEdit(addDialog, {
                 inline: true,
                 on: 'submit',
                 onSuccess: function() {
@@ -117,8 +117,6 @@ Template.editstartup.rendered = function() {
                 }
             });
 
-            addDialog.find('select.dropdown').dropdown();
-
             addDialog.on('submit', function(e) {
                 e.preventDefault();
 
@@ -127,22 +125,16 @@ Template.editstartup.rendered = function() {
                 }
 
                 var doc = _.extend({}, Router.current().editStartup.get(),
-                    addDialog.form('get values'));
+                    form.getData());
                 Meteor.call('saveStartup', doc)
 
                 // saveStartup();
                 addDialog.modal('hide');
             })
-
-            var el = addDialog.find('input[name=location]');
-            Meteor.typeahead(el, GeocoderGoogle.ttAdapter);
-            el.on('typeahead:selected', function(event, suggestion, dataset) {
-                var col = Router.current().editStartup.get();
-                col.geolocation = suggestion.location;
-            });
         }
 
-        addDialog.form('clear').form('set values', data).modal('show');
+        form.clear().setData(data);
+        addDialog.modal('show');
 
     });
 };

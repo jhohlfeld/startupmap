@@ -14,7 +14,7 @@ if (Meteor.isServer) {
                     'coordinates': [Number]
                 }),
                 type: String,
-                industry: String,
+                industry: [String],
                 description: Match.Optional(String),
                 dateFounded: Match.Optional(String),
                 headcount: Match.Optional(String)

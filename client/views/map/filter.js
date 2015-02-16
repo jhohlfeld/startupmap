@@ -40,9 +40,33 @@ Template.mapFilter.helpers({
                 return result;
             });
         };
+
+        var industries = [];
+        data.forEach(function(h) {
+            h.industry.forEach(function(i) {
+                var name = i.toLowerCase();
+                var ind = _.find(industries, function(j) {
+                    return j.name === name;
+                });
+                if (ind) {
+                    ind.count += 1;
+                } else {
+                    industries.push({
+                        _id: 'industry' + '.' + name,
+                        category: 'industry',
+                        title: i,
+                        name: name,
+                        count: 1
+                    });
+                }
+            });
+        });
+
+        industries = _.sortBy(industries, 'name');
+
         return {
             type: getCategoryItem('type'),
-            industry: getCategoryItem('industry')
+            industry: industries
         }
     },
 
@@ -60,6 +84,9 @@ Template.mapFilterItem.helpers({
         return active && active !== this ? 'disabled' : '';
     },
 });
+
+Template.mapFilter.rendered = function() {
+}
 
 Template.mapFilterItem.rendered = function() {
     var data = Template.currentData();

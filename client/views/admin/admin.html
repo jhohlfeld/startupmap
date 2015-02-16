@@ -6,9 +6,9 @@
         </header>
 
         <div class="content" vertical layout>
-        
+
             <main flex>
-                {{> yield}}                
+                {{> yield}}
             </main>
 
         </div>
@@ -20,7 +20,7 @@
 
 <template name="admin">
 
-    {{> Template.dynamic template="editstartup" data=edit}}
+    {{> Template.dynamic template="editstartup" data=edit}} 
     {{> Template.dynamic template="removestartup" data=remove}}
 
     <div class="container">
@@ -41,8 +41,7 @@
 <template name="startup">
     <div class="item" data-id="{{_id}}">
         <button class="right floated compact ui icon basic red button remove-startup">
-            <i class="trash icon"></i>
-            Remove
+            <i class="trash icon"></i> Remove
         </button>
         <i class="big map marker icon"></i>
         <div class="content">
@@ -51,8 +50,7 @@
                 {{#if website}}
                 <small>{{website}}</small>
                 <br> 
-                {{/if}}
-
+                {{/if}} 
                 {{#if location}}
                 <small>{{location}}</small>
                 <br> 
@@ -66,9 +64,9 @@
 
 <template name="editstartup">
     <form class="ui modal form" id="editstartup">
-        
+
         <i class="close icon"></i>
-        
+
         <div class="header">
             Add Entry
         </div>
@@ -90,28 +88,29 @@
                             <input type="text" name="website" placeholder="{{_ 'admin.startup.placeholder.website'}}">
                         </div>
                     </div>
-                    
+
                     <div class="two fields">
                         <div class="field">
                             <label>{{_ 'admin.startup.Location'}}</label>
                             <input type="text" name="location" placeholder="{{_ 'admin.startup.placeholder.location'}}" autocomplete="off" spellcheck="off" data-template="suggestion" />
                         </div>
-                         <div class="field">
-                            <label>{{_ "admin.startup.Industry"}}</label>
-                            <input type="text" name="industry" placeholder="{{_ 'admin.startup.placeholder.industry'}}">
+                        <div class="field">
+                            <label>{{_ 'admin.startup.Type'}}</label>
+                            <select name="type" class="ui search dropdown" autocomplete="off">
+                                <option value="">{{_ 'admin.startup.placeholder.type'}}</option>
+                                <option value="startup">Startup</option>
+                                <option value="coworking">Coworking</option>
+                                <option value="investor">Investor</option>
+                                <option value="service">Service</option>
+                                <option value="community">Community</option>
+                            </select>
                         </div>
-                   </div>
+                    </div>
 
                     <div class="field">
-                        <label>{{_ 'admin.startup.Type'}}</label>
-                        <select name="type" class="ui search dropdown" autocomplete="off">
-                            <option value="">{{_ 'admin.startup.placeholder.type'}}</option>
-                            <option value="startup">Startup</option>
-                            <option value="coworking">Coworking</option>
-                            <option value="investor">Investor</option>
-                            <option value="service">Service</option>
-                            <option value="community">Community</option>
-                        </select>
+                        <label>{{_ "admin.startup.Industry"}}
+                        <small><i>(Comma separated list)</i></small></label>
+                        <input type="text" name="industry" placeholder="{{_ 'admin.startup.placeholder.industry'}}">
                     </div>
                 </div>
             </div>
@@ -134,7 +133,7 @@
             </div>
 
             <div class="ui divider"></div>
-            
+
             <div class="two fields">
                 <div class="eleven wide field">
                     <div class="field">

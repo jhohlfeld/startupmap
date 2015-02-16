@@ -1,5 +1,6 @@
-var map, map_canvas, markers, mapMarkers = [],
-    mapId = Meteor.settings.public.mapbox.mapId;
+var map,
+    map_canvas,
+    markers = {};
 
 MapController = RouteController.extend({
 
@@ -129,7 +130,9 @@ Template.map.rendered = function() {
 
             map = new google.maps.Map(map_canvas[0], mapOptions);
 
-            //Associate the styled map with the MapTypeId and set it to display.
+            // Associate the styled map with the MapTypeId 
+            // and set it to display.
+
             map.mapTypes.set('map_style', styledMap);
             map.setMapTypeId('map_style');
 
@@ -143,31 +146,26 @@ Template.map.rendered = function() {
             // controls
 
             var mapFilter = $('#map-filter');
+            mapFilterPosition = map.controls[google.maps.ControlPosition.TOP_LEFT].length;
             map.controls[google.maps.ControlPosition.TOP_LEFT].push(mapFilter[0]);
-            mapFilter.show();
 
         } else {
             $('#map').replaceWith(map_canvas);
+            var mapFilter = $('main > #map-filter');
+            map.controls[google.maps.ControlPosition.TOP_LEFT].setAt(
+                    mapFilterPosition, mapFilter[0]);
         }
 
         // re-apply data
 
         Meteor.log.debug('(re)applying map data');
 
-        $('.ui.dropdown').dropdown();
-
-        Tracker.nonreactive(function() {
-            var accordion = $('.ui.accordion').accordion('open', Session.get('mapfiltersVisible'));
-            accordion.accordion('setting', {
-                onOpen: function() {
-                    var index = Math.floor($(this).index() / 2);
-                    Session.set('mapfiltersVisible', index);
-                }
-            });
-        });
-
         data.forEach(function(startup) {
             if (!startup.geolocation || !startup.geolocation.coordinates) {
+                return;
+            }
+
+            if (markers[startup._id]) {
                 return;
             }
 
@@ -175,8 +173,11 @@ Template.map.rendered = function() {
                 marker = new google.maps.Marker({
                     position: new google.maps.LatLng(c[0], c[1]),
                     map: map,
+                    animation: google.maps.Animation.DROP,
                     title: startup.type + ': ' + startup.name
                 });
+
+            markers[startup._id] = marker;
 
             var infowindow = new google.maps.InfoWindow({
                 maxWidth: 400
