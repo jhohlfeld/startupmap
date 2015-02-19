@@ -1,6 +1,7 @@
 var map,
     map_canvas,
-    markers = {};
+    markers = {},
+    markerClusterer;
 
 MapController = RouteController.extend({
 
@@ -160,6 +161,14 @@ Template.map.rendered = function() {
                 }
             });
 
+            // init clustering
+
+            var mcOptions = {
+                gridSize: 50,
+                maxZoom: 15
+            };
+            markerClusterer = new MarkerClusterer(map, [], mcOptions);
+
         } else {
             $('#map').replaceWith(map_canvas);
         }
@@ -168,13 +177,13 @@ Template.map.rendered = function() {
 
         Meteor.log.debug('(re)applying map data');
 
-        var allIds = [];
+        markerClusterer.clearMarkers();
 
         data.forEach(function(startup) {
-            allIds.push(startup._id);
 
+            // only create the same marker once
             if (markers[startup._id]) {
-                markers[startup._id].setVisible(true);
+                markerClusterer.addMarker(markers[startup._id]);
                 return;
             }
 
@@ -209,21 +218,8 @@ Template.map.rendered = function() {
                 infowindowOpen = infowindow;
             });
 
+            markerClusterer.addMarker(marker);
         });
 
-        // handle clustering
-        var mcOptions = {
-            gridSize: 50,
-            maxZoom: 15
-        };
-        var mc = new MarkerClusterer(map);
-        mc.addMarkers(_.values(markers));
-
-        // hide other markers
-        _.each(markers, function(m, id) {
-            if (!_.contains(allIds, id)) {
-                m.setVisible(false);
-            }
-        });
     });
 }
