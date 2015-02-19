@@ -195,27 +195,44 @@ Template.map.rendered = function() {
 
             markers[startup._id] = marker;
 
-            var infowindow = new google.maps.InfoWindow({
+            // var infowindow = new google.maps.InfoWindow({
+            //     maxWidth: 400
+            // });
+
+            // info window
+
+            // google.maps.event.addListener(marker, 'click', function() {
+            //     if (infowindowOpen && infowindowOpen !== infowindow) {
+            //         infowindowOpen.close();
+            //     }
+            //     var html = $(Blaze.toHTMLWithData(Template.mapinfo, startup));
+            //     html.find('.description').find('h1,h2,h3').each(function(e) {
+            //         var nodeName = 'h' + (parseInt(this.nodeName.substr(1)) + 2);
+            //         var oldNode = $(this),
+            //             newNode = $('<' + nodeName + '>', {
+            //                 text: oldNode.text()
+            //             });
+            //         oldNode.children().appendTo(newNode);
+            //         oldNode.replaceWith(newNode);
+            //     });
+            //     infowindow.setContent(html[0]);
+            //     infowindow.open(map, marker);
+            //     infowindowOpen = infowindow;
+            // });
+
+            // info popup
+            var infoPopup = new google.maps.InfoWindow({
                 maxWidth: 400
             });
 
-            google.maps.event.addListener(marker, 'click', function() {
-                if (infowindowOpen && infowindowOpen !== infowindow) {
-                    infowindowOpen.close();
-                }
-                var html = $(Blaze.toHTMLWithData(Template.mapinfo, startup));
-                html.find('.description').find('h1,h2,h3').each(function(e) {
-                    var nodeName = 'h' + (parseInt(this.nodeName.substr(1)) + 2);
-                    var oldNode = $(this),
-                        newNode = $('<' + nodeName + '>', {
-                            text: oldNode.text()
-                        });
-                    oldNode.children().appendTo(newNode);
-                    oldNode.replaceWith(newNode);
-                });
-                infowindow.setContent(html[0]);
-                infowindow.open(map, marker);
-                infowindowOpen = infowindow;
+            google.maps.event.addListener(marker, 'mouseover', function() {
+                var html = Blaze.toHTMLWithData(Template.infoPopup, startup);
+                infoPopup.setContent(html);
+                infoPopup.open(map, this);
+            });
+
+            google.maps.event.addListener(marker, 'mouseout', function() {
+                infoPopup.close();
             });
 
             markerClusterer.addMarker(marker);
