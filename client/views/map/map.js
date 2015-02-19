@@ -181,8 +181,6 @@ Template.map.rendered = function() {
             var c = startup.geolocation.coordinates,
                 marker = new google.maps.Marker({
                     position: new google.maps.LatLng(c[0], c[1]),
-                    map: map,
-                    animation: google.maps.Animation.DROP,
                     title: startup.type + ': ' + startup.name
                 });
 
@@ -210,7 +208,16 @@ Template.map.rendered = function() {
                 infowindow.open(map, marker);
                 infowindowOpen = infowindow;
             });
+
         });
+
+        // handle clustering
+        var mcOptions = {
+            gridSize: 50,
+            maxZoom: 15
+        };
+        var mc = new MarkerClusterer(map);
+        mc.addMarkers(_.values(markers));
 
         // hide other markers
         _.each(markers, function(m, id) {
