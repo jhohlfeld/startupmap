@@ -1,17 +1,14 @@
 <template name="mapFilter">
     <div id="map-filter">
-        <paper-shadow z="2" style="height: 100%;">
-	        <div class="ui vertical menu">
-	        {{#each items.industry}}
-	        	{{> mapFilterItem}}
-	        {{/each}}
-	        </div>
-        </paper-shadow>
+        <div class="ui vertical menu">
+            {{#each items}} {{> mapFilterItem}} {{/each}}
+        </div>
     </div>
 </template>
 
 <template name="mapFilterItem">
-<a class="{{labelColor key='industry' value=name}} {{active}} {{disabled}} item" href="" data-category="industry">
-	{{title}} 
-	<div class="ui {{labelColor key='industry' value=name}} {{disabled}} label">{{count}}</div></a>
+    <div class="{{labelColor key='type' value='startup' selected=selected}} {{active}} item" href="" data-category="industry">
+        {{title}}
+        <a class="ui {{labelColor key='type' value='startup' selected=selected}} label">{{count}}</a>
+    </div>
 </template>

@@ -8,13 +8,30 @@ MapController = RouteController.extend({
     template: 'map',
 
     waitOn: function() {
-        return [
-            Meteor.subscribe('startupsAll')
-        ];
+        return Meteor.subscribe('startupsAll');
     },
 
     data: function() {
-        return Startups.find();
+
+        var activeItems = Session.get('map.filterActiveItems') || {},
+            industries = [];
+
+        _.each(activeItems, function(v) {
+            if (v.selected) {
+                industries.push(v.title);
+            }
+        });
+
+        var query = {
+            'geolocation.coordinates': {
+                '$exists': true
+            },
+            'industry': {
+                '$in': industries
+            }
+        };
+
+        return Startups.find(query);
     },
 
     action: function() {
@@ -46,7 +63,7 @@ Template.map.rendered = function() {
     var infowindowOpen;
 
     this.autorun(function() {
-        var data = Template.currentData()
+        var data = Template.currentData();
 
         if (!Session.get('polymerReady')) {
             return;
@@ -143,29 +160,21 @@ Template.map.rendered = function() {
                 }
             });
 
-            // controls
-
-            var mapFilter = $('#map-filter');
-            mapFilterPosition = map.controls[google.maps.ControlPosition.TOP_LEFT].length;
-            map.controls[google.maps.ControlPosition.TOP_LEFT].push(mapFilter[0]);
-
         } else {
             $('#map').replaceWith(map_canvas);
-            var mapFilter = $('main > #map-filter');
-            map.controls[google.maps.ControlPosition.TOP_LEFT].setAt(
-                    mapFilterPosition, mapFilter[0]);
         }
 
         // re-apply data
 
         Meteor.log.debug('(re)applying map data');
 
+        var allIds = [];
+
         data.forEach(function(startup) {
-            if (!startup.geolocation || !startup.geolocation.coordinates) {
-                return;
-            }
+            allIds.push(startup._id);
 
             if (markers[startup._id]) {
+                markers[startup._id].setVisible(true);
                 return;
             }
 
@@ -201,6 +210,13 @@ Template.map.rendered = function() {
                 infowindow.open(map, marker);
                 infowindowOpen = infowindow;
             });
+        });
+
+        // hide other markers
+        _.each(markers, function(m, id) {
+            if (!_.contains(allIds, id)) {
+                m.setVisible(false);
+            }
         });
     });
 }

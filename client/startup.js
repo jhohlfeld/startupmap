@@ -46,7 +46,10 @@ UI.labelIcon = function(key, value) {
 
 UI.registerHelper('labelColor', function(context) {
     var key = context.hash.key,
-        value = context.hash.value;
-    return UI.labelColor(key, value);
+        value = context.hash.value,
+        selected = context.hash.selected;
+    return selected 
+        ? UI.labelColor(key, value)
+        : Session.get('config').labelColors[key.toLowerCase()]['inactive'];
 });
 

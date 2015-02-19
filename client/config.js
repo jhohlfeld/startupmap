@@ -23,6 +23,7 @@ Session.set('config', {
     },
     labelColors: {
         type: {
+            'inactive': 'grey',
             'startup': 'red',
             'coworking': 'orange',
             'investor': 'blue',
@@ -30,6 +31,7 @@ Session.set('config', {
             'community': 'green'
         },
         industry: {
+            'inactive': 'grey',
             'tech': 'yellow',
             'food': 'green',
             'marketing': 'red',

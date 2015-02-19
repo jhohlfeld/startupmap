@@ -1,73 +1,54 @@
-var activeItem = new ReactiveVar(null),
-    params = new ReactiveVar();
+Session.set('map.filterActiveItems', []);
 
-Tracker.autorun(function() {
-    var controller = Router.current();
+var filterItems = [];
 
-    if (!controller) {
-        return;
-    }
-    params.set(controller.getParams());
+Meteor.subscribe('startupsAll', function() {
+    var data = Startups.find({
+        'geolocation.coordinates': {
+            '$exists': true
+        }
+    }, {
+        fields: {
+            'type': 1,
+            'industry': 1
+        }
+    }).fetch();
+
+    data.forEach(function(h) {
+        h.industry.forEach(function(i) {
+            var name = i.toLowerCase(),
+                id = 'industry' + '.' + name,
+                industry = _.find(filterItems, function(j) {
+                    return j.id === id;
+                });
+
+            if (industry) {
+                industry.count += 1;
+            } else {
+                industry = {
+                    id: id,
+                    category: 'industry',
+                    title: i,
+                    name: name,
+                    count: 1,
+                    selected: true
+                };
+                filterItems.push(industry);
+            }
+
+        });
+    });
+
+    filterItems = _.sortBy(filterItems, 'name');
+    Session.set('map.filterActiveItems', filterItems);
 });
+
+
+
 
 Template.mapFilter.helpers({
     items: function() {
-        var data = Startups.find({}, {
-            fields: {
-                'type': 1,
-                'industry': 1
-            }
-        }).fetch();
-
-        var p = params.get();
-
-        var getCategoryItem = function(category) {
-            var d = _.groupBy(data, category);
-            return _.map(d, function(v, k) {
-                var name = k.toLowerCase();
-                var result = {
-                    _id: category + '.' + name,
-                    category: category,
-                    title: k,
-                    name: name,
-                    count: v.length
-                };
-
-                if (p && p.category === category && p.value === name) {
-                    activeItem.set(result);
-                }
-
-                return result;
-            });
-        };
-
-        var industries = [];
-        data.forEach(function(h) {
-            h.industry.forEach(function(i) {
-                var name = i.toLowerCase();
-                var ind = _.find(industries, function(j) {
-                    return j.name === name;
-                });
-                if (ind) {
-                    ind.count += 1;
-                } else {
-                    industries.push({
-                        _id: 'industry' + '.' + name,
-                        category: 'industry',
-                        title: i,
-                        name: name,
-                        count: 1
-                    });
-                }
-            });
-        });
-
-        industries = _.sortBy(industries, 'name');
-
-        return {
-            type: getCategoryItem('type'),
-            industry: industries
-        }
+        return Session.get('map.filterActiveItems');
     },
 
     hideMapFilters: function() {
@@ -77,32 +58,27 @@ Template.mapFilter.helpers({
 
 Template.mapFilterItem.helpers({
     active: function() {
-        return activeItem.get() === this ? 'active' : '';
-    },
-    disabled: function() {
-        var active = activeItem.get();
-        return active && active !== this ? 'disabled' : '';
-    },
+        var id = this.id,
+            items = Session.get('map.filterActiveItems'),
+            item = _.find(items, function(v) {
+                return v.id === id;
+            });
+        return item.selected ? 'active' : '';
+    }
+});
+
+Template.mapFilterItem.events({
+    'click a.label': function() {
+        var id = this.id,
+            item = _.find(filterItems, function(v) {
+                return v.id === id;
+            });
+        item.selected = !item.selected;
+        Session.set('map.filterActiveItems', filterItems);
+    }
 });
 
 Template.mapFilter.rendered = function() {
 }
 
-Template.mapFilterItem.rendered = function() {
-    var data = Template.currentData();
-
-    $(this.find('.item')).on('click', function(e) {
-        e.preventDefault();
-        var a = activeItem.get();
-        if (a && a._id === data._id) {
-            activeItem.set(null);
-            Router.go('map');
-        } else {
-            activeItem.set(data);
-            Router.go('map.filter', {
-                category: data.category,
-                value: data.name
-            });
-        }
-    });
-};
+Template.mapFilterItem.rendered = function() {};

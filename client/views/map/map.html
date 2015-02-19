@@ -5,9 +5,10 @@
             <h1 flex self-center>Startup Map</h1> {{> userNav}}
         </header>
 
-        <main class="content" vertical layout fit>
-            {{> yield }}
+        <main class="content" horizontal layout fit>
+
             {{> mapFilter }}
+            {{> yield }}
 
         </main>
     </core-header-panel>
