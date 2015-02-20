@@ -23,7 +23,11 @@ Meteor.startup(function() {
     Template.registerHelper('userId', function() {
         return Meteor.userId();
     });
-    
+
+    Template.registerHelper('concatList', function(context) {
+        return context.join(', ');
+    });
+
 });
 
 UI.labelColor = function(key, value) {
@@ -48,11 +52,8 @@ UI.registerHelper('labelColor', function(context) {
     var key = context.hash.key,
         value = context.hash.value,
         selected = context.hash.selected;
-    if(typeof selected === 'undefined') {
+    if (typeof selected === 'undefined') {
         selected = true;
     }
-    return selected 
-        ? UI.labelColor(key, value)
-        : Session.get('config').labelColors[key.toLowerCase()]['inactive'];
+    return selected ? UI.labelColor(key, value) : Session.get('config').labelColors[key.toLowerCase()]['inactive'];
 });
-

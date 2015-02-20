@@ -217,8 +217,7 @@ Template.map.rendered = function() {
 
             var c = startup.geolocation.coordinates,
                 marker = new google.maps.Marker({
-                    position: new google.maps.LatLng(c[0], c[1]),
-                    title: startup.type + ': ' + startup.name
+                    position: new google.maps.LatLng(c[0], c[1])
                 });
 
             markers[startup._id] = marker;
