@@ -16,13 +16,13 @@
         </div>
         <a class="ui {{labelColor key='type' value='startup' selected=selected}} label">{{count}}</a>
     </div>
-    <div class="content ui list">
-        {{> mapFilterResult}}
-    </div>
+    {{> mapFilterResult}}
 </template>
 
 <template name="mapFilterResult">
-	{{#each resultItems}}
-	<a class="item">{{name}}</a>
-	{{/each}}
+    <div class="content ui list">
+		{{#each resultItems}}
+		<a class="item">{{name}}</a>
+		{{/each}}
+    </div>
 </template>

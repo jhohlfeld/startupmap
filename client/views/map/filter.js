@@ -1,6 +1,7 @@
 Session.set('map.filterActiveItems', []);
 var activeItems = new ReactiveDict(),
     activeItem = null;
+
 var filterItems = [];
 
 Meteor.subscribe('startupsAll', function() {
@@ -75,10 +76,25 @@ Template.mapFilterResult.helpers({
         return Startups.find({
             'industry': {
                 '$in': [this.title]
+            },
+            'geolocation.coordinates': {
+                '$exists': true
             }
         });
     }
+});
 
+Template.mapFilterResult.events({
+    'click .list' : function() {
+        var id = this.id,
+            item = _.find(filterItems, function(v) {
+                return v.id === id;
+            });
+        if(!item.selected) {
+            item.selected = true;
+            Session.set('map.filterActiveItems', filterItems);
+        }
+    }
 });
 
 Template.mapFilterItem.events({

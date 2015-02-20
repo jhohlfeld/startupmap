@@ -56,8 +56,33 @@ MapFilteredController = MapController.extend({
         };
         return Startups.find(q);
     }
-
 });
+
+Template.mapFilterResult.events({
+    'click a': function() {
+        var marker = markers[this._id];
+        map.panTo(marker.getPosition());
+        map.setZoom(13);
+        var startup = this;
+        setTimeout(function() {
+            openInfoPopup(startup)
+        }, 500);
+    }
+});
+
+// info popup
+
+var infoPopup;
+
+openInfoPopup = function(startup) {
+    if (!infoPopup) {
+        return;
+    }
+    var html = Blaze.toHTMLWithData(Template.infoPopup, startup);
+    infoPopup.setContent(html);
+    var marker = markers[startup._id];
+    infoPopup.open(map, marker);
+};
 
 Template.map.rendered = function() {
     var template = this;
@@ -154,20 +179,23 @@ Template.map.rendered = function() {
             map.mapTypes.set('map_style', styledMap);
             map.setMapTypeId('map_style');
 
-            google.maps.event.addListener(map, "click", function(event) {
-                if (infowindowOpen) {
-                    infowindowOpen.close();
-                    infowindowOpen = null;
-                }
-            });
-
             // init clustering
 
             var mcOptions = {
                 gridSize: 50,
-                maxZoom: 15
+                maxZoom: 12
             };
             markerClusterer = new MarkerClusterer(map, [], mcOptions);
+
+            // init info popup
+
+            infoPopup = new google.maps.InfoWindow({
+                maxWidth: 400
+            });
+
+            google.maps.event.addListener(map, 'click', function(event) {
+                infoPopup.close();
+            });
 
         } else {
             $('#map').replaceWith(map_canvas);
@@ -220,15 +248,8 @@ Template.map.rendered = function() {
             //     infowindowOpen = infowindow;
             // });
 
-            // info popup
-            var infoPopup = new google.maps.InfoWindow({
-                maxWidth: 400
-            });
-
             google.maps.event.addListener(marker, 'mouseover', function() {
-                var html = Blaze.toHTMLWithData(Template.infoPopup, startup);
-                infoPopup.setContent(html);
-                infoPopup.open(map, this);
+                openInfoPopup(startup);
             });
 
             google.maps.event.addListener(marker, 'mouseout', function() {
