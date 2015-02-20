@@ -1,14 +1,24 @@
 <template name="mapFilter">
     <div id="map-filter">
-        <div class="ui vertical menu">
-            {{#each items}} {{> mapFilterItem}} {{/each}}
+	    <div class="scroll">
+	        <div class="ui styled fluid accordion">
+	            {{#each items}} {{> mapFilterItem}} {{/each}}
+	        </div>
         </div>
     </div>
 </template>
 
 <template name="mapFilterItem">
-    <div class="{{labelColor key='type' value='startup' selected=selected}} {{active}} item" href="" data-category="industry">
-        {{title}}
+    <div class="{{labelColor key='type' value='startup'}} title" horizontal layout>
+        <div class="header" flex>
+	        <i class="dropdown icon"></i>
+	        {{title}}
+        </div>
         <a class="ui {{labelColor key='type' value='startup' selected=selected}} label">{{count}}</a>
+    </div>
+    <div class="content ui list">
+        <a class="item">Test 01</a>
+        <a class="item">Test 02</a>
+        <a class="item">Test 03</a>
     </div>
 </template>

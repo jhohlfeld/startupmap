@@ -44,8 +44,6 @@ Meteor.subscribe('startupsAll', function() {
 });
 
 
-
-
 Template.mapFilter.helpers({
     items: function() {
         return Session.get('map.filterActiveItems');
@@ -68,7 +66,8 @@ Template.mapFilterItem.helpers({
 });
 
 Template.mapFilterItem.events({
-    'click a.label': function() {
+    'click .label': function(e) {
+        e.stopPropagation();
         var id = this.id,
             item = _.find(filterItems, function(v) {
                 return v.id === id;
@@ -79,6 +78,10 @@ Template.mapFilterItem.events({
 });
 
 Template.mapFilter.rendered = function() {
+    var template = this;
+    this.autorun(function() {
+        template.$('.ui.accordion').accordion();
+    });
 }
 
 Template.mapFilterItem.rendered = function() {};
