@@ -52,6 +52,15 @@ if (Meteor.isServer) {
         }]));
     });
 
+    Meteor.publish('startupsByIndustry', function(industry) {
+        check(industry, String);
+        return Startups.find({
+            'industry': {
+                '$in': [industry]
+            }
+        });
+    });
+
     // Accounts.createUser({
     //     username: 'admin',
     //     email: 'admin@example.com',

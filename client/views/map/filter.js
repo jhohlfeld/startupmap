@@ -1,5 +1,6 @@
 Session.set('map.filterActiveItems', []);
-
+var activeItems = new ReactiveDict(),
+    activeItem = null;
 var filterItems = [];
 
 Meteor.subscribe('startupsAll', function() {
@@ -31,7 +32,8 @@ Meteor.subscribe('startupsAll', function() {
                     title: i,
                     name: name,
                     count: 1,
-                    selected: true
+                    selected: true,
+                    active: false
                 };
                 filterItems.push(industry);
             }
@@ -62,7 +64,21 @@ Template.mapFilterItem.helpers({
                 return v.id === id;
             });
         return item.selected ? 'active' : '';
+    },
+    resultItems: function() {
+        return [];
     }
+});
+
+Template.mapFilterResult.helpers({
+    resultItems: function() {
+        return Startups.find({
+            'industry': {
+                '$in': [this.title]
+            }
+        });
+    }
+
 });
 
 Template.mapFilterItem.events({
@@ -74,6 +90,16 @@ Template.mapFilterItem.events({
             });
         item.selected = !item.selected;
         Session.set('map.filterActiveItems', filterItems);
+    },
+    'click .title': function() {
+        if (activeItem) {
+            activeItems.set(activeItem, false);
+        }
+        if (activeItem === this.id) {
+            return;
+        }
+        activeItems.set(this.id, true);
+        activeItem = this.id;
     }
 });
 

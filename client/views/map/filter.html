@@ -17,8 +17,12 @@
         <a class="ui {{labelColor key='type' value='startup' selected=selected}} label">{{count}}</a>
     </div>
     <div class="content ui list">
-        <a class="item">Test 01</a>
-        <a class="item">Test 02</a>
-        <a class="item">Test 03</a>
+        {{> mapFilterResult}}
     </div>
+</template>
+
+<template name="mapFilterResult">
+	{{#each resultItems}}
+	<a class="item">{{name}}</a>
+	{{/each}}
 </template>
