@@ -7,6 +7,11 @@ Router.route('/filter/:category/:value', {
     controller: 'MapController'
 });
 
+Router.route('/info/:slug', {
+	name: 'map.info',
+	controller: 'MapController'
+});
+
 Router.route('/admin', {
     name: 'admin',
 });

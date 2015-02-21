@@ -14,6 +14,11 @@ var StartupEdit = function(el, options) {
     this.$el.find('select.dropdown').dropdown();
 };
 
+/**
+ * Set the form's fields from a data document.
+ *
+ * @method setDat
+ */
 StartupEdit.prototype.setData = function(data) {
     var values = _.clone(data);
     if (_.isArray(values.industry)) {
@@ -23,12 +28,23 @@ StartupEdit.prototype.setData = function(data) {
     return this;
 };
 
+/**
+ * Retrieve data document from fields in the form.
+ *
+ * @method getData
+ */
 StartupEdit.prototype.getData = function() {
     var values = this.$el.form('get values');
+
+    // split industry into array
     values.industry = values.industry.split(',');
     values.industry = _.map(values.industry, function(v) {
         return v.trim();
     });
+
+    // create slug from name
+    values.slug = URLify2(values.name, 30);
+
     return values;
 };
 

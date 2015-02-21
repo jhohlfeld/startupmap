@@ -84,18 +84,28 @@ Template.mapFilterResult.helpers({
     }
 });
 
+// startup items in accordeon content
+
 Template.mapFilterResult.events({
-    'click .list' : function() {
+    'click .list': function() {
         var id = this.id,
             item = _.find(filterItems, function(v) {
                 return v.id === id;
             });
-        if(!item.selected) {
+        if (!item.selected) {
             item.selected = true;
             Session.set('map.filterActiveItems', filterItems);
         }
+    },
+    
+    'click a': function() {
+        Router.go('map.info', {
+            slug: this.slug
+        });
     }
 });
+
+// accordion items behavior
 
 Template.mapFilterItem.events({
     'click .label': function(e) {
@@ -107,6 +117,7 @@ Template.mapFilterItem.events({
         item.selected = !item.selected;
         Session.set('map.filterActiveItems', filterItems);
     },
+
     'click .title': function() {
         if (activeItem) {
             activeItems.set(activeItem, false);

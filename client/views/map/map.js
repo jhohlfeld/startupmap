@@ -3,6 +3,10 @@ var map,
     markers = {},
     markerClusterer;
 
+Session.set('map.infoPopupDisplay', null);
+
+// map controller
+
 MapController = RouteController.extend({
 
     layoutTemplate: 'mapLayout',
@@ -43,46 +47,26 @@ MapController = RouteController.extend({
     }
 });
 
-MapFilteredController = MapController.extend({
-    waintOn: function() {
-        return Meteor.subscribe('startupsFiltered', this.params.category, this.params.value);
-    },
-
-    data: function() {
-        var q = {};
-        q[this.params.category] = {
-            '$regex': '^' + this.params.value + '$',
-            '$options': 'i'
-        };
-        return Startups.find(q);
-    }
-});
-
-Template.mapFilterResult.events({
-    'click a': function() {
-        var marker = markers[this._id];
-        map.panTo(marker.getPosition());
-        map.setZoom(13);
-        var startup = this;
-        setTimeout(function() {
-            openInfoPopup(startup)
-        }, 500);
-    }
-});
-
 // info popup
 
 var infoPopup;
 
-openInfoPopup = function(startup) {
-    if (!infoPopup) {
-        return;
+Tracker.autorun(function() {
+    var startup = Session.get('map.infoPopupDisplay');
+    if (infoPopup) {
+        if (startup !== null) {
+            var html = Blaze.toHTMLWithData(Template.infoPopup, startup);
+            infoPopup.setContent(html);
+            var marker = markers[startup._id];
+            infoPopup.open(map, marker);
+        } else {
+            infoPopup.close();
+            Router.go('map');
+        }
     }
-    var html = Blaze.toHTMLWithData(Template.infoPopup, startup);
-    infoPopup.setContent(html);
-    var marker = markers[startup._id];
-    infoPopup.open(map, marker);
-};
+});
+
+// map template
 
 Template.map.rendered = function() {
     var template = this;
@@ -194,7 +178,7 @@ Template.map.rendered = function() {
             });
 
             google.maps.event.addListener(map, 'click', function(event) {
-                infoPopup.close();
+                Session.set('map.infoPopupDisplay', null);
             });
 
         } else {
@@ -210,17 +194,35 @@ Template.map.rendered = function() {
         data.forEach(function(startup) {
 
             // only create the same marker once
-            if (markers[startup._id]) {
-                markerClusterer.addMarker(markers[startup._id]);
-                return;
-            }
-
-            var c = startup.geolocation.coordinates,
+            var marker = markers[startup._id];
+            if (!marker) {
+                var c = startup.geolocation.coordinates;
                 marker = new google.maps.Marker({
                     position: new google.maps.LatLng(c[0], c[1])
                 });
 
-            markers[startup._id] = marker;
+                markers[startup._id] = marker;
+                google.maps.event.addListener(marker, 'mouseover', function() {
+                    Session.set('map.infoPopupDisplay', startup);
+                });
+
+                google.maps.event.addListener(marker, 'mouseout', function() {
+                    Session.set('map.infoPopupDisplay', null);
+                });
+            }
+
+            markerClusterer.addMarker(marker);
+
+            // update map position if info slug selected
+
+            if (Router.current().route.getName() === 'map.info') {
+                var slug = Router.current().params.slug;
+                if (startup.slug === slug) {
+                    map.panTo(marker.getPosition());
+                    map.setZoom(13);
+                    Session.set('map.infoPopupDisplay', startup);
+                }
+            }
 
             // var infowindow = new google.maps.InfoWindow({
             //     maxWidth: 400
@@ -247,16 +249,8 @@ Template.map.rendered = function() {
             //     infowindowOpen = infowindow;
             // });
 
-            google.maps.event.addListener(marker, 'mouseover', function() {
-                openInfoPopup(startup);
-            });
-
-            google.maps.event.addListener(marker, 'mouseout', function() {
-                infoPopup.close();
-            });
-
-            markerClusterer.addMarker(marker);
         });
+
 
     });
 }
