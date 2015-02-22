@@ -20,17 +20,16 @@
 </template>
 
 <template name="infoWindow">
-    <div class="info-window">
+    <div class="info-window ui {{labelColor key='type' value=type}} category">
         <paper-shadow z="2">
             <div class="ui segment" vertical layout>
                 <header>
+                    <div class="ui {{labelColor key='type' value=type}} right large label">{{_ type}}</div>
                     <h2 class="ui dividing header">{{name}}</h2>
-                    <div class="ui small {{labelColor key='type' value=type}} label">{{type}}</div>
-                    <span>Industry: <a href="" class="ui category {{labelColor key='industry' value=industry}}">{{concatList industry}}</a></span>
-                    <div class="ui list {{labelColor key='type' value=type}} category">
-                        <div class="item">{{location}}</div>
-                        <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a>
-                        </div>
+                    <div class="ui list category {{labelColor key='type' value=type}}">
+                        <div class="item">{{_ 'map.industry'}}: <a href="">{{concatList industry}}</a></div>
+                        <div class="item">{{{transformListString string=location delimiter=',' append='<br>'}}}</div>
+                        <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a></div>
                     </div>
                 </header>
                 {{#if description}}
@@ -46,5 +45,5 @@
 
 <template name="infoPopup">
     <div class="ui header">{{name}}</div>
-    <div class="content">Industries: {{concatList industry}}</div>
+    <div class="content">{{_ 'map.industry'}}: {{concatList industry}}</div>
 </template>

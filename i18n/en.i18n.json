@@ -30,5 +30,12 @@
                 "name": "Brand name must not be empty."
             }
         }
+    },
+
+    "startup": "Startup",
+    "service": "Service",
+
+    "map": {
+        "industry": "Industry"
     }
 }

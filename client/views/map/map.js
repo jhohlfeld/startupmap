@@ -74,7 +74,7 @@ Tracker.autorun(function() {
         return;
     }
 
-    var position = google.maps.ControlPosition.TOP_LEFT;
+    var position = google.maps.ControlPosition.LEFT;
     if (map.controls[position].getAt(0)) {
         map.controls[position].removeAt(0)
     }
@@ -221,6 +221,7 @@ Template.map.rendered = function() {
             });
 
             google.maps.event.addListener(map, 'click', function(event) {
+                Session.set('map.infoPopupDisplay', null);
                 Session.set('map.infoWindowDisplay', null);
             });
 

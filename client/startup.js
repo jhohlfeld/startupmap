@@ -28,6 +28,16 @@ Meteor.startup(function() {
         return context.join(', ');
     });
 
+    Template.registerHelper('transformListString', function(context) {
+        var string = (context.hash) ? context.hash.string : context,
+            delimiter = (context.hash) ? context.hash.delimiter : ',',
+            append = (context.hash && context.hash.append ?
+                context.hash.append : '');
+        return _.map(string.split(delimiter), function(s) {
+            return s.trim();
+        }).join(append);
+    });
+
 });
 
 UI.labelColor = function(key, value) {
