@@ -68,4 +68,54 @@ if (Meteor.isServer) {
     // });
 }
 
-if (Meteor.isClient) {}
+if (Meteor.isClient) {
+
+    // create subscription for map filter data
+
+    Session.set('map.filterActiveItems', []);
+
+    Meteor.subscribe('startupsAll', function() {
+        var data = Startups.find({
+            'geolocation.coordinates': {
+                '$exists': true
+            }
+        }, {
+            fields: {
+                'type': 1,
+                'industry': 1
+            }
+        }).fetch();
+
+        var filterItems = [];
+
+        data.forEach(function(h) {
+            h.industry.forEach(function(i) {
+                var name = i.toLowerCase(),
+                    id = 'industry' + '.' + name,
+                    industry = _.find(filterItems, function(j) {
+                        return j.id === id;
+                    });
+
+                if (industry) {
+                    industry.count += 1;
+                } else {
+                    industry = {
+                        id: id,
+                        category: 'industry',
+                        title: i,
+                        name: name,
+                        count: 1,
+                        selected: true,
+                        active: false
+                    };
+                    filterItems.push(industry);
+                }
+
+            });
+        });
+
+        filterItems = _.sortBy(filterItems, 'name');
+        Session.set('map.filterActiveItems', filterItems);
+    });
+
+}

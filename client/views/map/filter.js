@@ -1,51 +1,5 @@
-Session.set('map.filterActiveItems', []);
 var activeItems = new ReactiveDict(),
     activeItem = null;
-
-var filterItems = [];
-
-Meteor.subscribe('startupsAll', function() {
-    var data = Startups.find({
-        'geolocation.coordinates': {
-            '$exists': true
-        }
-    }, {
-        fields: {
-            'type': 1,
-            'industry': 1
-        }
-    }).fetch();
-
-    data.forEach(function(h) {
-        h.industry.forEach(function(i) {
-            var name = i.toLowerCase(),
-                id = 'industry' + '.' + name,
-                industry = _.find(filterItems, function(j) {
-                    return j.id === id;
-                });
-
-            if (industry) {
-                industry.count += 1;
-            } else {
-                industry = {
-                    id: id,
-                    category: 'industry',
-                    title: i,
-                    name: name,
-                    count: 1,
-                    selected: true,
-                    active: false
-                };
-                filterItems.push(industry);
-            }
-
-        });
-    });
-
-    filterItems = _.sortBy(filterItems, 'name');
-    Session.set('map.filterActiveItems', filterItems);
-});
-
 
 Template.mapFilter.helpers({
     items: function() {
@@ -88,7 +42,8 @@ Template.mapFilterResult.helpers({
 
 Template.mapFilterResult.events({
     'click .list': function() {
-        var id = this.id,
+        var filterItems = Session.get('map.filterActiveItems'),
+            id = this.id,
             item = _.find(filterItems, function(v) {
                 return v.id === id;
             });
@@ -97,7 +52,7 @@ Template.mapFilterResult.events({
             Session.set('map.filterActiveItems', filterItems);
         }
     },
-    
+
     'click a': function() {
         Router.go('map.info', {
             slug: this.slug
@@ -110,7 +65,8 @@ Template.mapFilterResult.events({
 Template.mapFilterItem.events({
     'click .label': function(e) {
         e.stopPropagation();
-        var id = this.id,
+        var filterItems = Session.get('map.filterActiveItems'),
+            id = this.id,
             item = _.find(filterItems, function(v) {
                 return v.id === id;
             });

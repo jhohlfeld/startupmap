@@ -4,6 +4,7 @@ var map,
     markerClusterer;
 
 Session.set('map.infoPopupDisplay', null);
+Session.set('map.infoWindowDisplay', null);
 
 // map controller
 
@@ -61,8 +62,50 @@ Tracker.autorun(function() {
             infoPopup.open(map, marker);
         } else {
             infoPopup.close();
-            Router.go('map');
         }
+    }
+});
+
+// info window
+
+Tracker.autorun(function() {
+    var startup = Session.get('map.infoWindowDisplay');
+    if (!map) {
+        return;
+    }
+
+    var position = google.maps.ControlPosition.TOP_LEFT;
+    if (map.controls[position].getAt(0)) {
+        map.controls[position].removeAt(0)
+    }
+
+    if (startup) {
+
+        // create new info window
+
+        var html = $(Blaze.toHTMLWithData(Template.infoWindow, startup)),
+            control = $(html)[0];
+
+        // reduce header tags in description to below h3
+
+        html.find('.description').find('h1,h2,h3,h4,h5').each(function(e) {
+            var headerValue = (parseInt(this.nodeName.substr(1)) + 2);
+            if (headerValue > 5) {
+                headerValue = 5;
+            }
+            var nodeName = 'h' + headerValue;
+            var oldNode = $(this),
+                newNode = $('<' + nodeName + '>', {
+                    text: oldNode.text()
+                });
+            oldNode.children().appendTo(newNode);
+            oldNode.replaceWith(newNode);
+        });
+
+        map.controls[position].setAt(0, control);
+
+    } else {
+        Router.go('map');
     }
 });
 
@@ -178,7 +221,7 @@ Template.map.rendered = function() {
             });
 
             google.maps.event.addListener(map, 'click', function(event) {
-                Session.set('map.infoPopupDisplay', null);
+                Session.set('map.infoWindowDisplay', null);
             });
 
         } else {
@@ -218,36 +261,27 @@ Template.map.rendered = function() {
             if (Router.current().route.getName() === 'map.info') {
                 var slug = Router.current().params.slug;
                 if (startup.slug === slug) {
-                    map.panTo(marker.getPosition());
-                    map.setZoom(13);
+                    var toZoom = 13,
+                        pos = marker.getPosition(),
+                        east = map_canvas.width() / 4 * toZoom * 0.000013,
+                        bounds = map.getBounds();
+                    map.setZoom(toZoom);
+                    pos = new google.maps.LatLng(pos.lat(), pos.lng() - east);
+                    if (!bounds || !bounds.contains(pos)) {
+                        map.panTo(pos);
+                    }
                     Session.set('map.infoPopupDisplay', startup);
+                    Session.set('map.infoWindowDisplay', startup);
                 }
             }
 
-            // var infowindow = new google.maps.InfoWindow({
-            //     maxWidth: 400
-            // });
+            // show info window when marker is clicked
 
-            // info window
-
-            // google.maps.event.addListener(marker, 'click', function() {
-            //     if (infowindowOpen && infowindowOpen !== infowindow) {
-            //         infowindowOpen.close();
-            //     }
-            //     var html = $(Blaze.toHTMLWithData(Template.mapinfo, startup));
-            //     html.find('.description').find('h1,h2,h3').each(function(e) {
-            //         var nodeName = 'h' + (parseInt(this.nodeName.substr(1)) + 2);
-            //         var oldNode = $(this),
-            //             newNode = $('<' + nodeName + '>', {
-            //                 text: oldNode.text()
-            //             });
-            //         oldNode.children().appendTo(newNode);
-            //         oldNode.replaceWith(newNode);
-            //     });
-            //     infowindow.setContent(html[0]);
-            //     infowindow.open(map, marker);
-            //     infowindowOpen = infowindow;
-            // });
+            google.maps.event.addListener(marker, 'click', function() {
+                Router.go('map.info', {
+                    slug: startup.slug
+                });
+            });
 
         });
 

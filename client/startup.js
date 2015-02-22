@@ -52,6 +52,9 @@ UI.registerHelper('labelColor', function(context) {
     var key = context.hash.key,
         value = context.hash.value,
         selected = context.hash.selected;
+    if (_.isArray(value)) {
+        value = value[0];
+    }
     if (typeof selected === 'undefined') {
         selected = true;
     }

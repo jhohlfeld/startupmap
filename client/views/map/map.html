@@ -8,7 +8,7 @@
         <main class="content" horizontal layout fit>
 
             {{> mapFilter }}
-            
+
             {{> yield }}
 
         </main>
@@ -19,22 +19,28 @@
     <section id="map" flex></section>
 </template>
 
-<template name="mapinfo">
-    <div class="mapinfo">
-        <h2 class="ui dividing header">{{name}}</h2>
-        <div class="ui small ribbon {{labelColor key='type' value=type}} label">{{type}}</div>
-        <span>Industry: <a href="" class="ui category {{labelColor key='industry' value=industry}}">{{concatList industry}}</a></span>
-        <div class="ui list {{labelColor key='type' value=type}} category">
-            <div class="item">{{location}}</div>
-            <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a>
+<template name="infoWindow">
+    <div class="info-window">
+        <paper-shadow z="2">
+            <div class="ui segment" vertical layout>
+                <header>
+                    <h2 class="ui dividing header">{{name}}</h2>
+                    <div class="ui small {{labelColor key='type' value=type}} label">{{type}}</div>
+                    <span>Industry: <a href="" class="ui category {{labelColor key='industry' value=industry}}">{{concatList industry}}</a></span>
+                    <div class="ui list {{labelColor key='type' value=type}} category">
+                        <div class="item">{{location}}</div>
+                        <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a>
+                        </div>
+                    </div>
+                </header>
+                {{#if description}}
+                <div class="ui divider"></div>
+                <div class="description" flex>
+                    {{#markdown}}{{description}}{{/markdown}}
+                </div>
+                {{/if}}
             </div>
-        </div>
-        {{#if description}}
-        <div class="ui divider"></div>
-        <div class="description">
-            {{#markdown}}{{description}}{{/markdown}}
-        </div>
-        {{/if}}
+        </paper-shadow>
     </div>
 </template>
 
