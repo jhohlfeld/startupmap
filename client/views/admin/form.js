@@ -24,6 +24,11 @@ StartupEdit.prototype.setData = function(data) {
     if (_.isArray(values.industry)) {
         values.industry = values.industry.join(', ');
     }
+
+    // hanlde dates
+    var m = moment.utc(values.dateFounded);
+    values.dateFounded = m.isValid() ? m.format('L') : '';
+
     this.$el.form('set values', values);
     return this;
 };
@@ -44,6 +49,35 @@ StartupEdit.prototype.getData = function() {
 
     // create slug from name
     values.slug = URLify2(values.name, 30);
+
+    // prefix urls to always contain a protocol
+    _.each(_.pick(values,
+        'website',
+        'video',
+        'socialFacebook',
+        'socialGplus',
+        'socialTwitter'), function(v, k) {
+        v = v.trim();
+        if (v && !v.match(/^\w+:\/\//)) {
+            v = 'https://' + v;
+        }
+        values[k] = v;
+    });
+
+    // parse date value
+    var m;
+    if (values.dateFounded !== '') {
+        if (values.dateFounded.length > 4) {
+            m = moment.utc(values.dateFounded, 'L', moment().locale());
+        } else {
+            m = moment.utc(values.dateFounded, 'YYYY', moment().locale());
+        }
+    }
+    if (m && m.isValid()) {
+        values.dateFounded = m.toDate();
+    } else {
+        values.dateFounded = null;
+    }
 
     return values;
 };

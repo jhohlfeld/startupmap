@@ -38,6 +38,21 @@ Meteor.startup(function() {
         }).join(append);
     });
 
+    Template.registerHelper('removeProtocol', function(context) {
+        var m = context.match(/^\w+:\/\/(.*)$/);
+        if (m) {
+            return m[1];
+        }
+        return context;
+    });
+
+    Template.registerHelper('dateFormat', function(context) {
+        var date = context.hash ? context.hash.date : context,
+            format = context.hash ? context.hash.format : 'L',
+            m = moment(date);
+        return m.isValid() ? m.format(format) : '';
+    });
+
 });
 
 UI.labelColor = function(key, value) {

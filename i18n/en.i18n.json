@@ -36,6 +36,7 @@
     "service": "Service",
 
     "map": {
-        "industry": "Industry"
+        "industry": "Industry",
+        "Founded": "Founded"
     }
 }

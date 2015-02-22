@@ -16,7 +16,7 @@ if (Meteor.isServer) {
                 type: String,
                 industry: [String],
                 description: Match.Optional(String),
-                dateFounded: Match.Optional(String),
+                dateFounded: Match.OneOf(Date, null, undefined),
                 headcount: Match.Optional(String)
             }));
             Startups.upsert({

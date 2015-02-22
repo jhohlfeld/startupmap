@@ -26,10 +26,26 @@
                 <header>
                     <div class="ui {{labelColor key='type' value=type}} right large label">{{_ type}}</div>
                     <h2 class="ui dividing header">{{name}}</h2>
-                    <div class="ui list category {{labelColor key='type' value=type}}">
-                        <div class="item">{{_ 'map.industry'}}: <a href="">{{concatList industry}}</a></div>
-                        <div class="item">{{{transformListString string=location delimiter=',' append='<br>'}}}</div>
-                        <div class="item"><a href="{{website}}"><i class="external link icon"></i>{{website}}</a></div>
+                    <div class="ui list category {{labelColor key='type' value=type}}"  horizontal layout>
+
+                        <div flex>
+                            <div class="item">{{{transformListString string=location delimiter=',' append='<br>'}}}</div>
+
+                            {{#if website}}
+                            <div class="item"><a href="{{website}}" target="blank"><i class="external link icon"></i>{{removeProtocol website}}</a></div>
+                            {{/if}}
+                        </div>
+
+                        <div class="right">
+                            <div class="item">{{_ 'map.industry'}}: <a href="">{{concatList industry}}</a></div>
+
+                            {{#if dateFounded}}
+                            <div class="item">
+                            {{_ 'map.Founded'}}: {{dateFormat date=dateFounded format='YYYY'}}
+                            </div>
+                            {{/if}}
+                        </div>
+
                     </div>
                 </header>
                 {{#if description}}
