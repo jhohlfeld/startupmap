@@ -27,7 +27,8 @@
             },
 
             "validation": {
-                "name": "Brand name must not be empty."
+                "name": "Brand name must not be empty.",
+                "integer": "Please give a number!"
             }
         }
     },

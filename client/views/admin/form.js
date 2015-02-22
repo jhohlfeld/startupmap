@@ -115,6 +115,13 @@ StartupEdit.rules = {
             type: 'empty',
             prompt: TAPi18n.__('admin.startup.validation.industry')
         }]
+    },
+    headcount: {
+        identifier: 'headcount',
+        rules: [{
+            type: 'integer',
+            prompt: TAPi18n.__('admin.startup.validation.integer')
+        }]
     }
 };
 
