@@ -95,6 +95,14 @@ StartupEdit.rules = {
             prompt: TAPi18n.__('admin.startup.validation.name')
         }]
     },
+    website: {
+        identifier: 'website',
+        optional: true,
+        rules: [{
+            type: 'url',
+            prompt: TAPi18n.__('admin.startup.validation.url')
+        }]
+    },
     location: {
         identifier: 'location',
         rules: [{
@@ -118,9 +126,42 @@ StartupEdit.rules = {
     },
     headcount: {
         identifier: 'headcount',
+        optional: true,
         rules: [{
             type: 'integer',
             prompt: TAPi18n.__('admin.startup.validation.integer')
+        }]
+    },
+    video: {
+        identifier: 'video',
+        optional: true,
+        rules: [{
+            type: 'url',
+            prompt: TAPi18n.__('admin.startup.validation.url')
+        }]
+    },
+    socialFacebook: {
+        identifier: 'socialFacebook',
+        optional: true,
+        rules: [{
+            type: 'url',
+            prompt: TAPi18n.__('admin.startup.validation.url')
+        }]
+    },
+    socialGplus: {
+        identifier: 'socialGplus',
+        optional: true,
+        rules: [{
+            type: 'url',
+            prompt: TAPi18n.__('admin.startup.validation.url')
+        }]
+    },
+    socialTwitter: {
+        identifier: 'socialTwitter',
+        optional: true,
+        rules: [{
+            type: 'url',
+            prompt: TAPi18n.__('admin.startup.validation.url')
         }]
     }
 };
